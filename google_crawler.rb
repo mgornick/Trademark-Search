@@ -12,7 +12,7 @@ class GoogleCrawler
 
   def organic_results(number)
     self.organic = []
-    doc = Nokogiri::HTML(page)
+    doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     results = doc.css("div[@id='ires']/ol/li[@class='g']/h3[@class='r']/a[@class='l']")
     results.each do |link|
@@ -24,7 +24,7 @@ class GoogleCrawler
   
   def sponsored_results(number)
     self.sponsored = []
-    doc = Nokogiri::HTML(page)
+    doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     results = doc.css("ol[@onmouseover='return true']/li")
     results.each do |link|
