@@ -1,7 +1,10 @@
 require 'global_crawler'
 require 'ap'
 
-puts ARGV.first
+# puts ARGV.first
+
+c = GlobalCrawler.new
+c.start
 
 # c = GlobalCrawler.new
 # g = c.search_google('honda')

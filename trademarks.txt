@@ -1,5 +1,2 @@
-google
-microsoft
 honda
 ford
-general motors
