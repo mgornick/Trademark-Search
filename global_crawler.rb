@@ -1,5 +1,6 @@
 require 'google_crawler'
 require 'bing_crawler'
+require 'yahoo_crawler'
 require 'capybara'
 require 'capybara/dsl'
 require 'net/http'
@@ -14,13 +15,15 @@ class GlobalCrawler
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
-      #self.search_bing(trademark)
-      self.search_google(trademark)
+      self.search_bing(trademark)
+      #self.search_google(trademark)
+      #self.search_yahoo(trademark)
     end
     
   end
   
   def load_file
+    puts 'Loading trademarks'
     return IO.read('trademarks.txt').split("\n")
   end
   
@@ -36,7 +39,10 @@ class GlobalCrawler
       
       if array[index].scan('http://').first
         f.write(self.fetch_page(array[index]))
-      else  
+        # IHOP broke the parser with an https link o_O
+      elsif array[index].scan('https://').first
+        f.write(self.fetch_page(array[index]))
+      else
         f.write(self.fetch_page('http://'+array[index]))
       end
     end
@@ -69,8 +75,8 @@ class GlobalCrawler
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://www.bing.com'
     Capybara.visit('/')
-    Capybara.fill_in "q", :with => search_term
-    Capybara.click 'Search'
+    Capybara.fill_in "sb_form_q", :with => search_term
+    Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
     
@@ -86,6 +92,29 @@ class GlobalCrawler
     self.export_links_to_files(search_term, organic, 'OL')
     self.export_links_to_files(search_term, sponsored, 'SL')    
   end
+  
+  # search yahoo
+  def search_yahoo(search_term)    
+     Capybara.current_driver = :culerity
+     Capybara.app_host = 'http://www.yahoo.com'
+     Capybara.visit('/')
+     Capybara.fill_in 'p_13838465-p', :with => search_term
+     Capybara.click 'Web Search'
+
+     yahoo_page = Capybara.page.body.to_s
+     
+     y = YahooCrawler.new(yahoo_page)
+
+     #write page to file
+     f = File.open(search_term+'/'+search_term+'_yahoo.html', 'w')
+     f.write(yahoo_page)
+
+     organic = y.organic_results(10)
+     sponsored = y.sponsored_results(10)
+
+     self.export_links_to_files(search_term, organic, 'OL')
+     #self.export_links_to_files(search_term, sponsored, 'SL')    
+   end
 
 end
 

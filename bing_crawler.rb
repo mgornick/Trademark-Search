@@ -14,7 +14,7 @@ class BingCrawler
     self.organic = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
-    results = doc.css("div[@id='results']/ul/li[@class='sa_cc']/div[@class='sb_tlst']/h3/a")
+    results = doc.css("div[@id='results']/ul[@class='sb_results']/li/div[@class='sa_cc']/div[@class='sb_tlst']/h3/a")
     results.each do |link|
       self.organic << link[:href]
     end
@@ -26,7 +26,7 @@ class BingCrawler
     self.sponsored = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
-    results = doc.css("div[@id='sidebar']/ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/h3/a")
+    results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add']/h3/a")
     results.each do |link|
       self.sponsored << link[:href]
     end
