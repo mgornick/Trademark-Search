@@ -15,9 +15,9 @@ class GlobalCrawler
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
-      self.search_bing(trademark)
+      #self.search_bing(trademark)
       #self.search_google(trademark)
-      #self.search_yahoo(trademark)
+      self.search_yahoo(trademark)
     end
     
   end
@@ -48,8 +48,26 @@ class GlobalCrawler
     end
   end
   
+  def export_sponsored_links_to_files(search_term, array, prefix)
+    puts "Running "+prefix+": "+search_term
+    array.each_index do |index|
+      f = File.open(search_term+'/'+search_term+prefix+index.to_s+'.html', 'w')
+      
+      if array[index].scan('http://').first
+        f.write(self.fetch_page(array[index]))
+        # IHOP broke the parser with an https link o_O
+      elsif array[index].scan('https://').first
+        f.write(self.fetch_page(array[index]))
+      else
+        f.write(self.fetch_page('http://'+array[index]))
+      end
+    end
+  end
+  
   # search google
-  def search_google(search_term)    
+  def search_google(search_term)
+    # turn off rack server since we're running against a remote app
+    Capybara.run_server = false    
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://www.google.com'
     Capybara.visit('/')
@@ -67,11 +85,13 @@ class GlobalCrawler
     organic = g.organic_results(10)
     sponsored = g.sponsored_results(10)
         
-    self.export_links_to_files(search_term, organic, 'OL')
-    self.export_links_to_files(search_term, sponsored, 'SL')    
+    self.export_links_to_files(search_term, organic, '_google_OL')
+    self.export_links_to_files(search_term, sponsored, '_google_SL')    
   end
   
-  def search_bing(search_term)    
+  def search_bing(search_term)
+    # turn off rack server since we're running against a remote app  
+    Capybara.run_server = false
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://www.bing.com'
     Capybara.visit('/')
@@ -89,32 +109,35 @@ class GlobalCrawler
     organic = b.organic_results(10)
     sponsored = b.sponsored_results(10)
         
-    self.export_links_to_files(search_term, organic, 'OL')
-    self.export_links_to_files(search_term, sponsored, 'SL')    
+    self.export_links_to_files(search_term, organic, '_bing_OL')
+    self.export_links_to_files(search_term, sponsored, '_bing_SL')    
   end
   
   # search yahoo
-  def search_yahoo(search_term)    
-     Capybara.current_driver = :culerity
-     Capybara.app_host = 'http://www.yahoo.com'
-     Capybara.visit('/')
-     Capybara.fill_in 'p_13838465-p', :with => search_term
-     Capybara.click 'Web Search'
+  def search_yahoo(search_term) 
+    # turn off rack server since we're running against a remote app
+    Capybara.run_server = false 
+    Capybara.current_driver = :culerity
+    # http://search.yahoo.com/ loads faster and it's easier to find the textfield
+    Capybara.app_host = 'http://search.yahoo.com/'
+    Capybara.visit('/')
+    Capybara.fill_in 'p', :with => search_term
+    Capybara.click 'Search'
 
-     yahoo_page = Capybara.page.body.to_s
-     
-     y = YahooCrawler.new(yahoo_page)
+    yahoo_page = Capybara.page.body.to_s
 
-     #write page to file
-     f = File.open(search_term+'/'+search_term+'_yahoo.html', 'w')
-     f.write(yahoo_page)
+    y = YahooCrawler.new(yahoo_page)
 
-     organic = y.organic_results(10)
-     sponsored = y.sponsored_results(10)
+    #write page to file
+    f = File.open(search_term+'/'+search_term+'_yahoo.html', 'w')
+    f.write(yahoo_page)
 
-     self.export_links_to_files(search_term, organic, 'OL')
-     #self.export_links_to_files(search_term, sponsored, 'SL')    
-   end
+    organic = y.organic_results(10)
+    sponsored = y.sponsored_results(10)
+
+    self.export_links_to_files(search_term, organic, '_yahoo_OL')
+    self.export_links_to_files(search_term, sponsored, '_yahoo_SL')    
+  end
 
 end
 

@@ -26,7 +26,7 @@ class BingCrawler
     self.sponsored = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
-    results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add']/h3/a")
+    results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/h3/a")
     results.each do |link|
       self.sponsored << link[:href]
     end
