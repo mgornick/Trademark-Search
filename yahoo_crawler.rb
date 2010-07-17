@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'nokogiri'
 
-class GoogleCrawler
+class YahooCrawler
   attr_accessor :organic, :sponsored, :page
   
   def initialize(webpage)
@@ -14,7 +14,7 @@ class GoogleCrawler
     self.organic = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
-    results = doc.css("div[@id='ires']/ol/li[@class='g']/h3[@class='r']/a[@class='l']")
+    results = doc.css("div[@id='web']/ol/li/div[@class='res']/div/h3/a")
     results.each do |link|
       self.organic << link[:href]
     end
@@ -26,11 +26,12 @@ class GoogleCrawler
     self.sponsored = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
-    results = doc.css("ol[@onmouseover='return true']/li/h3/a")
+    results = doc.css("div[@id='right']/div[@id='east']/ul/li/a")
     results.each do |link|
       self.sponsored << link[:href]
     end
-      self.sponsored[0..number-1]
+    
+    self.sponsored[0..number-1]
   end
   
 end
