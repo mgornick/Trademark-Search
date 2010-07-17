@@ -51,7 +51,7 @@ class GlobalCrawler
     g = GoogleCrawler.new(google_page)
     
     #write page to file
-    f = File.open(search_term+'/'+search_term+'_google_'+index.to_s+'.html', 'w')
+    f = File.open(search_term+'/'+search_term+'_google_page.html', 'w')
     f.write(google_page)
     
     organic = g.organic_results(10)
