@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'nokogiri'
+require 'pdfkit'
 
 class GoogleCrawler
   attr_accessor :organic, :sponsored, :page

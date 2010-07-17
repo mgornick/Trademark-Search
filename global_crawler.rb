@@ -16,8 +16,8 @@ class GlobalCrawler
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
       #self.search_bing(trademark)
-      #self.search_google(trademark)
-      self.search_yahoo(trademark)
+      self.search_google(trademark)
+      # self.search_yahoo(trademark)
     end
     
   end
@@ -32,35 +32,23 @@ class GlobalCrawler
     Net::HTTP.get(URI.parse(url))
   end
   
+  
   def export_links_to_files(search_term, array, prefix)
     puts "Running "+prefix+": "+search_term
     array.each_index do |index|
-      f = File.open(search_term+'/'+search_term+"_"+prefix+index.to_s+'.html', 'w')
+      puts "Converting #{array[index]} to PDF"
+      PDFKit.new(array[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
       
-      if array[index].scan('http://').first
-        f.write(self.fetch_page(array[index]))
-        # IHOP broke the parser with an https link o_O
-      elsif array[index].scan('https://').first
-        f.write(self.fetch_page(array[index]))
-      else
-        f.write(self.fetch_page('http://'+array[index]))
-      end
-    end
-  end
-  
-  def export_sponsored_links_to_files(search_term, array, prefix)
-    puts "Running "+prefix+": "+search_term
-    array.each_index do |index|
-      f = File.open(search_term+'/'+search_term+prefix+index.to_s+'.html', 'w')
-      
-      if array[index].scan('http://').first
-        f.write(self.fetch_page(array[index]))
-        # IHOP broke the parser with an https link o_O
-      elsif array[index].scan('https://').first
-        f.write(self.fetch_page(array[index]))
-      else
-        f.write(self.fetch_page('http://'+array[index]))
-      end
+      # f = File.open(search_term+'/'+search_term+"_"+prefix+index.to_s+'.html', 'w')
+      # 
+      # if array[index].scan('http://').first
+      #   f.write(self.fetch_page(array[index]))
+      #   # IHOP broke the parser with an https link o_O
+      # elsif array[index].scan('https://').first
+      #   f.write(self.fetch_page(array[index]))
+      # else
+      #   f.write(self.fetch_page('http://'+array[index]))
+      # end
     end
   end
   
@@ -75,17 +63,18 @@ class GlobalCrawler
     Capybara.click 'Google Search'
     
     google_page = Capybara.page.body.to_s
+    PDFKit.new(google_page).to_file(search_term+'/'+search_term+'_google.pdf')
     
     g = GoogleCrawler.new(google_page)
     
     #write page to file
-    f = File.open(search_term+'/'+search_term+'_google.html', 'w')
-    f.write(google_page)
+    # f = File.open(search_term+'/'+search_term+'_google.html', 'w')
+    # f.write(google_page)
     
     organic = g.organic_results(10)
     sponsored = g.sponsored_results(10)
         
-    self.export_links_to_files(search_term, organic, '_google_OL')
+    # self.export_links_to_files(search_term, organic, '_google_OL')
     self.export_links_to_files(search_term, sponsored, '_google_SL')    
   end
   
