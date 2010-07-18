@@ -14,22 +14,22 @@ class GlobalCrawler
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
-      # self.search_bing(trademark)
+      self.search_bing(trademark)
       # self.search_google(trademark)
-      self.search_yahoo(trademark)
+      # self.search_yahoo(trademark)
     end
+  end
+
+  def load_file
+    puts 'Loading trademarks'
+    return IO.read('trademarks.txt').split("\n")
   end
   
   def fetch_page(url)
     puts "Grabbing: "+url 
     Net::HTTP.get(URI.parse(url))
   end
-  
-  def load_file
-    puts 'Loading trademarks'
-    return IO.read('trademarks.txt').split("\n")
-  end
-    
+
   def export_links_to_files(search_term, organic_results, prefix)
     puts "Running "+prefix+": "+search_term
     organic_results.each_index do |index|
@@ -61,7 +61,7 @@ class GlobalCrawler
         begin
           puts "Trying the cite link: " + adurls[index]
           if self.fetch_page(adurls[index])
-            PDFKit.new(adurls[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+            PDFKit.new(adurls[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
           end
         rescue Exception => e1
           puts "Could not generate PDF for: " + adurls[index]
@@ -103,18 +103,15 @@ class GlobalCrawler
     Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
-    
-    b = BingCrawler.new(bing_page)
-    
-    #write page to file
     PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'_bing.pdf')
     
-    organic = b.organic_results(10)
-    sponsored = b.sponsored_results(10)
+    b = BingCrawler.new(bing_page)
+    b.organic_results(10)
+    b.sponsored_results(10)
     
         
-    self.export_links_to_files(search_term, organic, '_bing_OL')
-    self.export_links_to_files(search_term, sponsored, '_bing_SL')    
+    #self.export_links_to_files(search_term, b.organic, '_bing_OL')
+    self.export_sponsored_links_to_files(search_term, b.sponsored_cites, '_bing_SL', b.sponsored_adurls)    
   end
   
   # search yahoo
