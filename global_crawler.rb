@@ -14,8 +14,8 @@ class GlobalCrawler
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
-      self.search_bing(trademark)
-      self.search_google(trademark)
+      # self.search_bing(trademark)
+      # self.search_google(trademark)
       self.search_yahoo(trademark)
     end
   end
@@ -86,7 +86,7 @@ class GlobalCrawler
     b = BingCrawler.new(bing_page)
     
     #write page to file
-    PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'bing.pdf')
+    PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'_bing.pdf')
     
     organic = b.organic_results(10)
     sponsored = b.sponsored_results(10)
@@ -106,10 +106,14 @@ class GlobalCrawler
     Capybara.visit('/')
     Capybara.fill_in 'p', :with => search_term
     Capybara.click 'Search'
-
+    
     yahoo_page = Capybara.page.body.to_s
-    PDFKit.new(yahoo_page).to_file(search_term+'/'+search_term+'_yahoo.pdf')
-
+    
+    yahoo_pdf = PDFKit.new(yahoo_page)
+    yahoo_pdf.stylesheets << "yahoo_styling.css"
+    puts yahoo_pdf.stylesheets
+    yahoo_pdf.to_file(search_term+'/'+search_term+'_yahoo.pdf')
+  
     y = YahooCrawler.new(yahoo_page)
 
     organic = y.organic_results(10)
