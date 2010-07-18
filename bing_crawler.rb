@@ -28,6 +28,23 @@ class BingCrawler
     link.scan(/[\w|\d|\-|.]*\.[\w]{3,4}[\/|\w|\d|\-]*[.|\w]*/).last
   end
   
+  def remove_html(text)
+    clean = ""
+    ignore = false
+    
+    text.each_char do |char| # parses out all the code between <>
+      if char == "<"
+        ignore = true
+      elsif char == ">"
+        ignore = false
+      elsif !ignore
+        clean << char
+      end
+    end
+    
+    return clean
+  end
+  
   def sponsored_results(number)
     self.sponsored_adurls = []
     self.sponsored_cites = []
@@ -35,19 +52,24 @@ class BingCrawler
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     # grabbing the cite tag
-    results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/cite")
-    results.each do |cite_link|
-        self.sponsored_cites << "http://" + cite_link
-        puts "Found cite: " + cite_link
-    end
-    self.sponsored_cites[0..number-1]
-    
-    results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/h3/a")
+    results = doc.css("ul[@onmouseover='return true']/li/div/cite")
     results.each do |link|
-      self.sponsored_adurls << link[:href]
+      cite_link = self.remove_html(link.to_s)
+      cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
+      if cite_link.scan('http').first
+        self.sponsored_cites << cite_link
+      else
+        self.sponsored_cites << "http://" + cite_link
+      end
     end
+    self.sponsored_cites = self.sponsored_cites[0..number-1]
     
-    self.sponsored_adurls[0..number-1]
+    # results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/h3/a")
+    # results.each do |link|
+    #   self.sponsored_adurls << link[:href]
+    # end
+    # 
+    # self.sponsored_adurls[0..number-1]
   end
   
 end
