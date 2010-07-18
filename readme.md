@@ -1,7 +1,7 @@
 #Trademark Search
 
 ##Purpose
-Professor Hyman (?) wants to do a search for a trademark on Google, Bing, and Yahoo and get the top organic search results and the top sponsored links (limit 5 - 10 for each).  In the end he wants an Excel file will all of these results organized as well as a 'screenshot' of the search results page as well as each of the organic search and sponsored links.
+Professor David Hyman wants to do a search for a trademark on Google, Bing, and Yahoo and get the top organic search results and the top sponsored links (limit 5 - 10 for each).  In the end he wants an Excel file will all of these results organized as well as a 'screenshot' of the search results page as well as each of the organic search and sponsored links.
 
 ##Code Overview
 Basically the purpose of the code is to do the following:
@@ -25,3 +25,11 @@ Basically the purpose of the code is to do the following:
       - Put urls to results into a CSV (for excel)
     
 #Helpful Hints
+
+#Required Gems
+PDFKit
+JRuby
+Culerity
+Capybara
+Nokogiri
+wkhtmltopdf

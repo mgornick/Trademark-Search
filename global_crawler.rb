@@ -7,7 +7,6 @@ require 'net/http'
 require 'fileutils'
 
 class GlobalCrawler
-  
   def start
     trademarks = self.load_file
     
@@ -15,11 +14,10 @@ class GlobalCrawler
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
-      #self.search_bing(trademark)
+      self.search_bing(trademark)
       self.search_google(trademark)
-      # self.search_yahoo(trademark)
+      self.search_yahoo(trademark)
     end
-    
   end
   
   def load_file
@@ -33,22 +31,23 @@ class GlobalCrawler
   end
   
   
-  def export_links_to_files(search_term, array, prefix)
+  def export_links_to_files(search_term, array, prefix, params = {:backup => []})
     puts "Running "+prefix+": "+search_term
     array.each_index do |index|
       puts "Converting #{array[index]} to PDF"
-      PDFKit.new(array[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
       
-      # f = File.open(search_term+'/'+search_term+"_"+prefix+index.to_s+'.html', 'w')
-      # 
-      # if array[index].scan('http://').first
-      #   f.write(self.fetch_page(array[index]))
-      #   # IHOP broke the parser with an https link o_O
-      # elsif array[index].scan('https://').first
-      #   f.write(self.fetch_page(array[index]))
-      # else
-      #   f.write(self.fetch_page('http://'+array[index]))
-      # end
+      begin
+        PDFKit.new(array[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+      rescue Exception => e
+        puts "Caught an exception trying to generate PDF for " + array[index]
+        puts "Error message" + e
+        begin
+          puts "Trying the cite link: " + params[:backup][index]
+          PDFKit.new(params[:backup][index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+        rescue Exception => ex
+          puts "Could not generate PDF for: " + params[:backup][index]
+        end
+      end
     end
   end
   
@@ -66,16 +65,11 @@ class GlobalCrawler
     PDFKit.new(google_page).to_file(search_term+'/'+search_term+'_google.pdf')
     
     g = GoogleCrawler.new(google_page)
-    
-    #write page to file
-    # f = File.open(search_term+'/'+search_term+'_google.html', 'w')
-    # f.write(google_page)
-    
     organic = g.organic_results(10)
     sponsored = g.sponsored_results(10)
         
-    # self.export_links_to_files(search_term, organic, '_google_OL')
-    self.export_links_to_files(search_term, sponsored, '_google_SL')    
+    self.export_links_to_files(search_term, organic, '_google_OL')
+    self.export_links_to_files(search_term, sponsored, '_google_SL', {:backup => g.sponsored_cite})    
   end
   
   def search_bing(search_term)
@@ -92,11 +86,11 @@ class GlobalCrawler
     b = BingCrawler.new(bing_page)
     
     #write page to file
-    f = File.open(search_term+'/'+search_term+'_bing.html', 'w')
-    f.write(bing_page)
+    PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'bing.pdf')
     
     organic = b.organic_results(10)
     sponsored = b.sponsored_results(10)
+    
         
     self.export_links_to_files(search_term, organic, '_bing_OL')
     self.export_links_to_files(search_term, sponsored, '_bing_SL')    
@@ -114,12 +108,9 @@ class GlobalCrawler
     Capybara.click 'Search'
 
     yahoo_page = Capybara.page.body.to_s
+    PDFKit.new(yahoo_page).to_file(search_term+'/'+search_term+'_yahoo.pdf')
 
     y = YahooCrawler.new(yahoo_page)
-
-    #write page to file
-    f = File.open(search_term+'/'+search_term+'_yahoo.html', 'w')
-    f.write(yahoo_page)
 
     organic = y.organic_results(10)
     sponsored = y.sponsored_results(10)
