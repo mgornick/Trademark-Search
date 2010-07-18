@@ -14,8 +14,8 @@ class GlobalCrawler
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
-      # self.search_bing(trademark)
-      self.search_google(trademark)
+      self.search_bing(trademark)
+      # self.search_google(trademark)
       # self.search_yahoo(trademark)
     end
   end
@@ -24,12 +24,6 @@ class GlobalCrawler
     puts 'Loading trademarks'
     return IO.read('trademarks.txt').split("\n")
   end
-  
-  def fetch_page(url)
-    puts "Grabbing: "+url 
-    Net::HTTP.get(URI.parse(url))
-  end
-  
   
   def export_links_to_files(search_term, organic_results, prefix)
     puts "Running "+prefix+": "+search_term
@@ -95,18 +89,15 @@ class GlobalCrawler
     Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
-    
-    b = BingCrawler.new(bing_page)
-    
-    #write page to file
     PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'_bing.pdf')
     
-    organic = b.organic_results(10)
-    sponsored = b.sponsored_results(10)
+    b = BingCrawler.new(bing_page)
+    b.organic_results(10)
+    b.sponsored_results(10)
     
         
-    self.export_links_to_files(search_term, organic, '_bing_OL')
-    self.export_links_to_files(search_term, sponsored, '_bing_SL')    
+    #self.export_links_to_files(search_term, b.organic, '_bing_OL')
+    self.export_sponsored_links_to_files(search_term, b.sponsored_cites, '_bing_SL', b.sponsored_adurls)    
   end
   
   # search yahoo
@@ -127,11 +118,11 @@ class GlobalCrawler
   
     y = YahooCrawler.new(yahoo_page)
 
-    organic = y.organic_results(10)
-    sponsored = y.sponsored_results(10)
+    y.organic_results(10)
+    y.sponsored_results(10)
 
-    self.export_links_to_files(search_term, organic, '_yahoo_OL')
-    self.export_links_to_files(search_term, sponsored, '_yahoo_SL')    
+    self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
+    self.export_sponsored_links_to_files(search_term, y.sponsored_cites, '_yahoo_SL', y.sponsored_adurls)    
   end
 
 end
