@@ -3,12 +3,12 @@ require 'nokogiri'
 require 'pdfkit'
 
 class GoogleCrawler
-  attr_accessor :organic, :sponsored, :page, :sponsored_cite
+  attr_accessor :organic, :page, :sponsored_cites, :sponsored_adurls
   
   def initialize(webpage)
     self.organic = []
-    self.sponsored = []
-    self.sponsored_cite = []
+    self.sponsored_adurls = []
+    self.sponsored_cites = []
     self.page = webpage
   end
 
@@ -29,8 +29,9 @@ class GoogleCrawler
   end
   
   def sponsored_results(number)
-    self.sponsored = []
-    self.sponsored_cite = []
+    self.sponsored_adurls = []
+    self.sponsored_cites = []
+    
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     # grabbing the cite tag
@@ -38,22 +39,25 @@ class GoogleCrawler
     results.each do |link|
       cite_link = link.css('cite').text.gsub(' ', '').gsub("\n", '')
       if cite_link.scan('http').first
-        self.sponsored_cite << cite_link
+        self.sponsored_cites << cite_link
       else
-        self.sponsored_cite << "http://" + cite_link
+        self.sponsored_cites << "http://" + cite_link
       end
+      puts "Found cite: " + cite_link
     end
+    self.sponsored_cites[0..number-1]
     
     results = doc.css("ol[@onmouseover='return true']/li/h3/a")
     results.each do |link|
       cite_link = self.adurl(link[:href])
       if cite_link.scan('http://').first
-        self.sponsored << cite_link
+        self.sponsored_adurls << cite_link
       else
-        self.sponsored << "http://" + cite_link
+        self.sponsored_adurls << "http://" + cite_link
       end
+      puts "Found adurl: " + cite_link
     end
-    self.sponsored[0..number-1]
+    self.sponsored_adurls[0..number-1]
   end
   
 end

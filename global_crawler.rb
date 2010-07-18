@@ -15,8 +15,8 @@ class GlobalCrawler
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
       # self.search_bing(trademark)
-      # self.search_google(trademark)
-      self.search_yahoo(trademark)
+      self.search_google(trademark)
+      # self.search_yahoo(trademark)
     end
   end
   
@@ -31,21 +31,34 @@ class GlobalCrawler
   end
   
   
-  def export_links_to_files(search_term, array, prefix, params = {:backup => []})
+  def export_links_to_files(search_term, organic_results, prefix)
     puts "Running "+prefix+": "+search_term
-    array.each_index do |index|
-      puts "Converting #{array[index]} to PDF"
-      
+    organic_results.each_index do |index|
       begin
-        PDFKit.new(array[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+        puts "Converting #{organic_results[index]} to PDF"
+        PDFKit.new(organic_results[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
       rescue Exception => e
-        puts "Caught an exception trying to generate PDF for " + array[index]
+        puts "Caught an exception trying to generate PDF for " + organic_results[index]
         puts "Error message" + e
+      end
+    end
+  end
+  
+  def export_sponsored_links_to_files(search_term, cites, prefix, adurls)
+    puts "Exporting ads "+prefix+": "+search_term
+    cites.each_index do |index|
+      puts "Converting #{cites[index]} to PDF"
+      begin
+        PDFKit.new(cites[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+      rescue Exception => e0
+        puts "Caught an exception trying to generate PDF for " + cites[index]
+        puts "Error message" + e0
         begin
-          puts "Trying the cite link: " + params[:backup][index]
-          PDFKit.new(params[:backup][index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
-        rescue Exception => ex
-          puts "Could not generate PDF for: " + params[:backup][index]
+          puts "Trying the cite link: " + adurls[index]
+          PDFKit.new(adurls[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+        rescue Exception => e1
+          puts "Could not generate PDF for: " + adurls[index]
+          puts "Error message " + e1
         end
       end
     end
@@ -65,11 +78,11 @@ class GlobalCrawler
     PDFKit.new(google_page).to_file(search_term+'/'+search_term+'_google.pdf')
     
     g = GoogleCrawler.new(google_page)
-    organic = g.organic_results(10)
-    sponsored = g.sponsored_results(10)
+    g.organic_results(10)
+    g.sponsored_results(10)
         
-    self.export_links_to_files(search_term, organic, '_google_OL')
-    self.export_links_to_files(search_term, sponsored, '_google_SL', {:backup => g.sponsored_cite})    
+    self.export_links_to_files(search_term, g.organic, '_google_OL')
+    self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
   end
   
   def search_bing(search_term)
@@ -98,11 +111,9 @@ class GlobalCrawler
   
   # search yahoo
   def search_yahoo(search_term) 
-    # turn off rack server since we're running against a remote app
-    Capybara.run_server = false 
+    Capybara.run_server = false # turn off rack server since we're running against a remote app
     Capybara.current_driver = :culerity
-    # http://search.yahoo.com/ loads faster and it's easier to find the textfield
-    Capybara.app_host = 'http://search.yahoo.com/'
+    Capybara.app_host = 'http://search.yahoo.com/' # http://search.yahoo.com/ loads faster and it's easier to find the textfield
     Capybara.visit('/')
     Capybara.fill_in 'p', :with => search_term
     Capybara.click 'Search'
@@ -111,7 +122,7 @@ class GlobalCrawler
     
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"
-    puts yahoo_pdf.stylesheets
+    puts yahoo_pdf.stylesheets # add custome styling so yahoo doesn't add the line through all the text
     yahoo_pdf.to_file(search_term+'/'+search_term+'_yahoo.pdf')
   
     y = YahooCrawler.new(yahoo_page)
