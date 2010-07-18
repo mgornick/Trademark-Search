@@ -11,7 +11,7 @@ describe "GoogleCrawler" do
     it "should init a google crawler object" do
       @google_crawler.organic.class.should == Array
       @google_crawler.page.should == @page
-      @google_crawler.sponsored.class.should == Array
+      @google_crawler.sponsored_adurls.class.should == Array
     end
 
     it "should create an array of x urls of organic results on a page" do
@@ -22,7 +22,7 @@ describe "GoogleCrawler" do
 
     it "should create an array of all of the sponsored links" do
       @google_crawler.sponsored_results(5).size.should == 5
-      @google_crawler.sponsored.should == ["http://automobiles.honda.com/", "http://www.obrienteamurbana.com/", "http://www.auto-price-finder.com/welcome", "http://www.autosite.com/system/cpcjump.cfm", "http://www.reply.com/portal/default.asp", "http://www.smartcycleshopper.com/honda-motorcycles.aspx"]
+      @google_crawler.sponsored_adurls.should == ["http://automobiles.honda.com/", "http://www.obrienteamurbana.com/", "http://www.auto-price-finder.com/welcome", "http://www.autosite.com/system/cpcjump.cfm", "http://www.reply.com/portal/default.asp", "http://www.smartcycleshopper.com/honda-motorcycles.aspx"]
       @google_crawler.sponsored_results(7).size.should == 6
     end
   end
@@ -40,7 +40,7 @@ describe "GoogleCrawler" do
     
     it "should create an array of all of the sponsored links" do
       @google_crawler.sponsored_results(5).size.should == 3
-      @google_crawler.sponsored.should == ["http://automobiles.honda.com/", "http://www.autosite.com/system/cpcjump.cfm", "http://www.reply.com/portal/default.asp"]
+      @google_crawler.sponsored_adurls.should == ["http://automobiles.honda.com/", "http://www.autosite.com/system/cpcjump.cfm", "http://www.reply.com/portal/default.asp"]
     end
   end
   

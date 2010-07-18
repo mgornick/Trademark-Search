@@ -15,14 +15,9 @@ class GlobalCrawler
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
       # self.search_bing(trademark)
-      self.search_google(trademark)
-      # self.search_yahoo(trademark)
+      # self.search_google(trademark)
+      self.search_yahoo(trademark)
     end
-  end
-  
-  def load_file
-    puts 'Loading trademarks'
-    return IO.read('trademarks.txt').split("\n")
   end
   
   def fetch_page(url)
@@ -30,16 +25,24 @@ class GlobalCrawler
     Net::HTTP.get(URI.parse(url))
   end
   
-  
+  def load_file
+    puts 'Loading trademarks'
+    return IO.read('trademarks.txt').split("\n")
+  end
+    
   def export_links_to_files(search_term, organic_results, prefix)
     puts "Running "+prefix+": "+search_term
     organic_results.each_index do |index|
       begin
         puts "Converting #{organic_results[index]} to PDF"
-        PDFKit.new(organic_results[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+        if self.fetch_page(organic_results[index])
+          PDFKit.new(organic_results[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+        end
+          
       rescue Exception => e
         puts "Caught an exception trying to generate PDF for " + organic_results[index]
         puts "Error message" + e
+        PDFKit.new("Page failed to load:" + organic_results[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
       end
     end
   end
@@ -49,16 +52,21 @@ class GlobalCrawler
     cites.each_index do |index|
       puts "Converting #{cites[index]} to PDF"
       begin
-        PDFKit.new(cites[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+        if self.fetch_page(cites[index])
+          PDFKit.new(cites[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+        end
       rescue Exception => e0
         puts "Caught an exception trying to generate PDF for " + cites[index]
         puts "Error message" + e0
         begin
           puts "Trying the cite link: " + adurls[index]
-          PDFKit.new(adurls[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+          if self.fetch_page(adurls[index])
+            PDFKit.new(adurls[index]).to_file(search_term+'/'+search_term+"_"+prefix+index.to_s+'.pdf')
+          end
         rescue Exception => e1
           puts "Could not generate PDF for: " + adurls[index]
           puts "Error message " + e1
+          PDFKit.new("Page failed to load:" + cites[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
         end
       end
     end
@@ -127,11 +135,11 @@ class GlobalCrawler
   
     y = YahooCrawler.new(yahoo_page)
 
-    organic = y.organic_results(10)
-    sponsored = y.sponsored_results(10)
+    y.organic_results(10)
+    y.sponsored_results(10)
 
-    self.export_links_to_files(search_term, organic, '_yahoo_OL')
-    self.export_links_to_files(search_term, sponsored, '_yahoo_SL')    
+    self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
+    self.export_links_to_files(search_term, y.sponsored_cites, '_yahoo_SL')
   end
 
 end

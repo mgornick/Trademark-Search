@@ -43,7 +43,6 @@ class GoogleCrawler
       else
         self.sponsored_cites << "http://" + cite_link
       end
-      puts "Found cite: " + cite_link
     end
     self.sponsored_cites[0..number-1]
     
@@ -55,7 +54,6 @@ class GoogleCrawler
       else
         self.sponsored_adurls << "http://" + cite_link
       end
-      puts "Found adurl: " + cite_link
     end
     self.sponsored_adurls[0..number-1]
   end
