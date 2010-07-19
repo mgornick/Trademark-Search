@@ -21,7 +21,7 @@ class BingCrawler
       self.organic << link[:href]
     end
     
-    self.organic[0..number-1]
+    self.organic = self.organic[0..number-1]
   end
   
   def adurl(link) #regex to try an extract the resulting adurl from the sponsored link

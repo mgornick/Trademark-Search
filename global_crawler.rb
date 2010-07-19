@@ -7,17 +7,107 @@ require 'net/http'
 require 'fileutils'
 
 class GlobalCrawler
+  attr_accessor :output
+  
   def start
+    begin
     trademarks = self.load_file
+    self.init_excel_header
     
     trademarks.each do |trademark|
       if !File.directory?(trademark)
         FileUtils.mkdir(trademark) #makes folder for that trademark
       end
+      self.output.write(trademark.to_s + ", ")
       self.search_bing(trademark)
-      # self.search_google(trademark)
-      # self.search_yahoo(trademark)
+      self.search_google(trademark)
+      self.search_yahoo(trademark)
     end
+      
+    rescue Exception => e
+      puts "Encountered an error: " + e
+      self.output.close
+    end
+  end
+  
+  def init_excel_header
+    self.output = File.new("trademark_results.csv", "w")
+    header = ['Trademark']
+    header << 'Bing Total OL'
+    header << 'Bing Total SL'
+    header << 'Bing_OL0'
+    header << 'Bing_OL1'
+    header << 'Bing_OL2'
+    header << 'Bing_OL3'
+    header << 'Bing_OL4'
+    header << 'Bing_OL5'
+    header << 'Bing_OL6'
+    header << 'Bing_OL7'
+    header << 'Bing_OL8'
+    header << 'Bing_OL9'
+    
+    header << 'Bing_SL0'
+    header << 'Bing_SL1'
+    header << 'Bing_SL2'
+    header << 'Bing_SL3'
+    header << 'Bing_SL4'
+    header << 'Bing_SL5'
+    header << 'Bing_SL6'
+    header << 'Bing_SL7'
+    header << 'Bing_SL8'
+    header << 'Bing_SL9'
+    
+    header << 'Google Total OL'
+    header << 'Google Total SL'
+    header << 'Google_OL0'
+    header << 'Google_OL1'
+    header << 'Google_OL2'
+    header << 'Google_OL3'
+    header << 'Google_OL4'
+    header << 'Google_OL5'
+    header << 'Google_OL6'
+    header << 'Google_OL7'
+    header << 'Google_OL8'
+    header << 'Google_OL9'
+               
+    header << 'Google_SL0'
+    header << 'Google_SL1'
+    header << 'Google_SL2'
+    header << 'Google_SL3'
+    header << 'Google_SL4'
+    header << 'Google_SL5'
+    header << 'Google_SL6'
+    header << 'Google_SL7'
+    header << 'Google_SL8'
+    header << 'Google_SL9'
+    
+    header << 'Yahoo Total OL'
+    header << 'Yahoo Total SL'
+    header << 'Yahoo_OL0'
+    header << 'Yahoo_OL1'
+    header << 'Yahoo_OL2'
+    header << 'Yahoo_OL3'
+    header << 'Yahoo_OL4'
+    header << 'Yahoo_OL5'
+    header << 'Yahoo_OL6'
+    header << 'Yahoo_OL7'
+    header << 'Yahoo_OL8'
+    header << 'Yahoo_OL9'
+    
+    header << 'Yahoo_SL0'
+    header << 'Yahoo_SL1'
+    header << 'Yahoo_SL2'
+    header << 'Yahoo_SL3'
+    header << 'Yahoo_SL4'
+    header << 'Yahoo_SL5'
+    header << 'Yahoo_SL6'
+    header << 'Yahoo_SL7'
+    header << 'Yahoo_SL8'
+    header << 'Yahoo_SL9'
+    
+    head = header.map {|i| i + ","}.to_s
+    
+    self.output.write("#{head}\n")
   end
 
   def load_file
@@ -88,9 +178,22 @@ class GlobalCrawler
     g = GoogleCrawler.new(google_page)
     g.organic_results(10)
     g.sponsored_results(10)
+    
+    self.write_seach_results(b.organic, b.sponsored_cites)
         
-    self.export_links_to_files(search_term, g.organic, '_google_OL')
-    self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
+    # self.export_links_to_files(search_term, g.organic, '_google_OL')
+    # self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
+  end
+  
+  def write_seach_results(organic, sponsored_cites)
+    self.output.write(organic.size.to_s + ",")
+    self.output.write(sponsored_cites.size.to_s + ",")
+    
+    self.output.write(organic.map {|i| i+", "}.to_s)
+    (10-organic.size).times {self.output.write(", ")} # add additional columns when not 10 links
+    
+    self.output.write(sponsored_cites.map {|i| i+", "}.to_s)
+    (10-sponsored_cites.size).times {self.output.write(", ")}# add additional columns when not 10 links
   end
   
   def search_bing(search_term)
@@ -109,9 +212,10 @@ class GlobalCrawler
     b.organic_results(10)
     b.sponsored_results(10)
     
-        
-    #self.export_links_to_files(search_term, b.organic, '_bing_OL')
-    self.export_sponsored_links_to_files(search_term, b.sponsored_cites, '_bing_SL', b.sponsored_adurls)    
+    self.write_seach_results(b.organic, b.sponsored_cites)
+    
+    # self.export_links_to_files(search_term, b.organic, '_bing_OL')
+    # self.export_links_to_files(search_term, b.sponsored_cites, '_bing_SL')    
   end
   
   # search yahoo
@@ -134,9 +238,12 @@ class GlobalCrawler
 
     y.organic_results(10)
     y.sponsored_results(10)
+    
+    self.write_seach_results(b.organic, b.sponsored_cites)
+    self.write("\n")
 
-    self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
-    self.export_links_to_files(search_term, y.sponsored_cites, '_yahoo_SL')
+    # self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
+    # self.export_links_to_files(search_term, y.sponsored_cites, '_yahoo_SL')
   end
 
 end
