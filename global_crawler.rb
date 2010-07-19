@@ -206,11 +206,9 @@ class GlobalCrawler
     Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
+    b = BingCrawler.new(bing_page)
     index = bing_page.rindex('.sa_cpt{position:absolute}')
-    bing_page = @bing_crawler.convert_absolute_to_static(bing_page, index)
-    
-    
-    
+    bing_page = b.convert_absolute_to_static(bing_page, index)
     PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'_bing.pdf')
     
     b = BingCrawler.new(bing_page)
