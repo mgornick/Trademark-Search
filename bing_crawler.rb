@@ -10,6 +10,19 @@ class BingCrawler
     self.sponsored_cites = []
     self.page = webpage
   end
+  
+  def convert_absolute_to_static(html, index)
+    start = index + 17
+    html[start]   = 's'
+    html[start+1] = 't'
+    html[start+2] = 'a'
+    html[start+3] = 't'
+    html[start+4] = 'i'
+    html[start+5] = 'c'
+    html[start+6] = ''
+    html[start+6] = ''
+    html
+  end
 
 
   def organic_results(number)

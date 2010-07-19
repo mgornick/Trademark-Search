@@ -179,10 +179,10 @@ class GlobalCrawler
     g.organic_results(10)
     g.sponsored_results(10)
     
-    self.write_seach_results(b.organic, b.sponsored_cites)
+    self.write_seach_results(g.organic, g.sponsored_cites)
         
-    # self.export_links_to_files(search_term, g.organic, '_google_OL')
-    # self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
+    self.export_links_to_files(search_term, g.organic, '_google_OL')
+    self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
   end
   
   def write_seach_results(organic, sponsored_cites)
@@ -206,6 +206,11 @@ class GlobalCrawler
     Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
+    index = bing_page.rindex('.sa_cpt{position:absolute}')
+    bing_page = @bing_crawler.convert_absolute_to_static(bing_page, index)
+    
+    
+    
     PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'_bing.pdf')
     
     b = BingCrawler.new(bing_page)
@@ -214,8 +219,8 @@ class GlobalCrawler
     
     self.write_seach_results(b.organic, b.sponsored_cites)
     
-    # self.export_links_to_files(search_term, b.organic, '_bing_OL')
-    # self.export_links_to_files(search_term, b.sponsored_cites, '_bing_SL')    
+    self.export_links_to_files(search_term, b.organic, '_bing_OL')
+    self.export_links_to_files(search_term, b.sponsored_cites, '_bing_SL')    
   end
   
   # search yahoo
@@ -239,11 +244,11 @@ class GlobalCrawler
     y.organic_results(10)
     y.sponsored_results(10)
     
-    self.write_seach_results(b.organic, b.sponsored_cites)
-    self.write("\n")
+    self.write_seach_results(y.organic, y.sponsored_cites)
+    self.output.write("\n")
 
-    # self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
-    # self.export_links_to_files(search_term, y.sponsored_cites, '_yahoo_SL')
+    self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
+    self.export_links_to_files(search_term, y.sponsored_cites, '_yahoo_SL')
   end
 
 end
