@@ -24,7 +24,10 @@ Basically the purpose of the code is to do the following:
       - Put screen shot into a folder
       - Put urls to results into a CSV (for excel)
     
-#Helpful Hints
+#Usage
+- modify the trademarks.txt file with the search terms you want to run
+- type: ruby runner.rb
+- a trademark_results.csv file will be created along with folders representing the trademarks
 
 #Required Gems
 PDFKit
