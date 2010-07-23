@@ -28,7 +28,6 @@ describe "BingCrawler" do
       @bing_crawler.sponsored_cites.size.should == 6
       @bing_crawler.ad_positions.size.should == 6
       @bing_crawler.ad_positions.should == ['Top', 'Right','Right','Right','Right','Bottom']
-      
     end
   end
 end

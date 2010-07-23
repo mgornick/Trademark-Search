@@ -25,6 +25,13 @@ describe "GoogleCrawler" do
       @google_crawler.sponsored_adurls.should == ["http://automobiles.honda.com/", "http://www.obrienteamurbana.com/", "http://www.auto-price-finder.com/welcome", "http://www.autosite.com/system/cpcjump.cfm", "http://www.reply.com/portal/default.asp", "http://www.smartcycleshopper.com/honda-motorcycles.aspx"]
       @google_crawler.sponsored_results(7).size.should == 6
     end
+    
+    it "should store the positions of the ads" do
+      @google_crawler.sponsored_results(10).size.should == 6
+      @google_crawler.sponsored_cites.should == ["http://www.honda.com", "http://www.ObrienTeamUrbana.com", "http://Honda-Sale.Auto-Price-Finder.com", "http://Honda-2010-Clearance.Autosite.com", "http://Honda.Reply.com", "http://www.SmartCycleShopper.com/Honda"]
+      @google_crawler.ad_positions.size.should == 6
+      @google_crawler.ad_positions.should == ['Top', 'Right', 'Right', 'Right', 'Right', 'Right']
+    end
   end
 
   context "second search using honda" do
@@ -42,6 +49,7 @@ describe "GoogleCrawler" do
       @google_crawler.sponsored_results(5).size.should == 3
       @google_crawler.sponsored_adurls.should == ["http://automobiles.honda.com/", "http://www.autosite.com/system/cpcjump.cfm", "http://www.reply.com/portal/default.asp"]
     end
+
   end
   
   context "testing sponsored links" do
@@ -58,7 +66,6 @@ describe "GoogleCrawler" do
     it "should use the adurl for the top most url as well" do
       link = "file:///aclk?sa=L&ai=C2axYzmkqTPaBG4TCNJTr4LgGwMjB2AGgnZOUFu301gUIABABILZUUNb6i-j-_____wFgycb-h_CjpBTIAQGqBBlP0A3Qo5eNP95Y5t3Qa0Zz1nIu62wA2kuzgAWQTg&sig=AGiWqtwpVFeU7I2wVgNZydRlbKaX6hH6-g&adurl=http://pixel1097.everesttech.net/1097/rq/3/s_abfa0108447ca729740d575c2e1aad7d_5853803352/url%3Dhttp%253A//automobiles.honda.com/"
       @google_crawler.adurl(link).should == "automobiles.honda.com/"
-    
     end
   end
   

@@ -3,10 +3,11 @@ require 'nokogiri'
 require 'pdfkit'
 
 class GoogleCrawler
-  attr_accessor :organic, :page, :sponsored_cites, :sponsored_adurls
+  attr_accessor :organic, :page, :sponsored_cites, :sponsored_adurls, :ad_positions
   
   def initialize(webpage)
     self.organic = []
+    self.ad_positions = []
     self.sponsored_adurls = []
     self.sponsored_cites = []
     self.page = webpage
@@ -31,22 +32,26 @@ class GoogleCrawler
   def sponsored_results(number)
     self.sponsored_adurls = []
     self.sponsored_cites = []
+    self.ad_positions = []
     
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     # grabbing the cite tag
-    results = doc.css("ol[@onmouseover='return true']/li")
-    results.each do |link|
+    # top
+    
+    top_results = doc.css("div[@id='tads']/ol[@onmouseover='return true']/li")
+    top_results.each do |link|
       cite_link = link.css('cite').text.gsub(' ', '').gsub("\n", '')
       if cite_link.scan('http').first
         self.sponsored_cites << cite_link
       else
         self.sponsored_cites << "http://" + cite_link
       end
+      self.ad_positions << 'Top'
     end
     self.sponsored_cites[0..number-1]
     
-    results = doc.css("ol[@onmouseover='return true']/li/h3/a")
+    results = doc.css("div[@id='tads']/ol[@onmouseover='return true']/li/h3/a")
     results.each do |link|
       cite_link = self.adurl(link[:href])
       if cite_link.scan('http://').first
@@ -55,6 +60,33 @@ class GoogleCrawler
         self.sponsored_adurls << "http://" + cite_link
       end
     end
+    
+    self.sponsored_adurls[0..number-1]
+    
+    
+    # Right
+    results = doc.css("td[@class='std']/ol[@onmouseover='return true']/li")
+    results.each do |link|
+      cite_link = link.css('cite').text.gsub(' ', '').gsub("\n", '')
+      if cite_link.scan('http').first
+        self.sponsored_cites << cite_link
+      else
+        self.sponsored_cites << "http://" + cite_link
+      end
+      self.ad_positions << 'Right'
+    end
+    self.sponsored_cites[0..number-1]
+    
+    results = doc.css("td[@class='std']/ol[@onmouseover='return true']/li/h3/a")
+    results.each do |link|
+      cite_link = self.adurl(link[:href])
+      if cite_link.scan('http://').first
+        self.sponsored_adurls << cite_link
+      else
+        self.sponsored_adurls << "http://" + cite_link
+      end
+    end
+    
     self.sponsored_adurls[0..number-1]
   end
   
