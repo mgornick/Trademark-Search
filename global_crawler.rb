@@ -105,7 +105,7 @@ class GlobalCrawler
     header << 'Yahoo_SL8'
     header << 'Yahoo_SL9'
     
-    head = header.map {|i| i + ","}.to_s
+    head = header.map {|i| i + " \t "}.to_s
     
     self.output.write("#{head}\n")
   end
@@ -126,13 +126,13 @@ class GlobalCrawler
       begin
         puts "Converting #{organic_results[index]} to PDF"
         if self.fetch_page(organic_results[index])
-          PDFKit.new(organic_results[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+          PDFKit.new(organic_results[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
         end
           
       rescue Exception => e
         puts "Caught an exception trying to generate PDF for " + organic_results[index]
         puts "Error message" + e
-        PDFKit.new("Page failed to load:" + organic_results[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+        PDFKit.new("Page failed to load:" + organic_results[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
       end
     end
   end
@@ -143,7 +143,7 @@ class GlobalCrawler
       puts "Converting #{cites[index]} to PDF"
       begin
         if self.fetch_page(cites[index])
-          PDFKit.new(cites[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+          PDFKit.new(cites[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
         end
       rescue Exception => e0
         puts "Caught an exception trying to generate PDF for " + cites[index]
@@ -151,12 +151,12 @@ class GlobalCrawler
         begin
           puts "Trying the cite link: " + adurls[index]
           if self.fetch_page(adurls[index])
-            PDFKit.new(adurls[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+            PDFKit.new(adurls[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
           end
         rescue Exception => e1
           puts "Could not generate PDF for: " + adurls[index]
           puts "Error message " + e1
-          PDFKit.new("Page failed to load:" + cites[index]).to_file(search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+          PDFKit.new("Page failed to load:" + cites[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
         end
       end
     end
@@ -173,27 +173,33 @@ class GlobalCrawler
     Capybara.click 'Google Search'
     
     google_page = Capybara.page.body.to_s
-    PDFKit.new(google_page).to_file(search_term+'/'+search_term+'_google.pdf')
+    PDFKit.new(google_page).to_file('trademarks/'+search_term+'/'+search_term+'_google.pdf')
     
     g = GoogleCrawler.new(google_page)
     g.organic_results(10)
     g.sponsored_results(10)
     
-    self.write_seach_results(g.organic, g.sponsored_cites)
+    self.write_seach_results(g.organic, g.sponsored_cites, g.ad_positions)
         
     self.export_links_to_files(search_term, g.organic, '_google_OL')
     self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
   end
   
-  def write_seach_results(organic, sponsored_cites)
-    self.output.write(organic.size.to_s + ",")
-    self.output.write(sponsored_cites.size.to_s + ",")
+  def write_seach_results(organic, sponsored_cites, ad_positions)
+    self.output.write(organic.size.to_s + " \t")
+    self.output.write(sponsored_cites.size.to_s + " \t ")
     
-    self.output.write(organic.map {|i| i+", "}.to_s)
-    (10-organic.size).times {self.output.write(", ")} # add additional columns when not 10 links
+    self.output.write(organic.map {|i| i+" \t "}.to_s)
+    (10-organic.size).times {self.output.write(" \t ")} # add additional columns when not 10 links
     
-    self.output.write(sponsored_cites.map {|i| i+", "}.to_s)
-    (10-sponsored_cites.size).times {self.output.write(", ")}# add additional columns when not 10 links
+    sponsored_string = ""
+    sponsored_cites.each_index do |i|
+      sponsored_string << sponsored_cites[i] + " " + ad_positions[i] + " \t "
+    end
+    self.output.write(sponsored_string)
+    
+    # self.output.write(sponsored_cites.map {|i| i+" \t "}.to_s)
+    (10-sponsored_cites.size).times {self.output.write(" \t ")}# add additional columns when not 10 links
   end
   
   def search_bing(search_term)
@@ -209,13 +215,13 @@ class GlobalCrawler
     b = BingCrawler.new(bing_page)
     index = bing_page.rindex('.sa_cpt{position:absolute}')
     bing_page = b.convert_absolute_to_static(bing_page, index)
-    PDFKit.new(bing_page).to_file(search_term+'/'+search_term+'_bing.pdf')
+    PDFKit.new(bing_page).to_file('trademarks/'+search_term+'/'+search_term+'_bing.pdf')
     
     b = BingCrawler.new(bing_page)
     b.organic_results(10)
     b.sponsored_results(10)
     
-    self.write_seach_results(b.organic, b.sponsored_cites)
+    self.write_seach_results(b.organic, b.sponsored_cites, b.ad_positions)
     
     self.export_links_to_files(search_term, b.organic, '_bing_OL')
     self.export_links_to_files(search_term, b.sponsored_cites, '_bing_SL')    
@@ -235,14 +241,14 @@ class GlobalCrawler
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"
     puts yahoo_pdf.stylesheets # add custome styling so yahoo doesn't add the line through all the text
-    yahoo_pdf.to_file(search_term+'/'+search_term+'_yahoo.pdf')
+    yahoo_pdf.to_file('trademarks/'+search_term+'/'+search_term+'_yahoo.pdf')
   
     y = YahooCrawler.new(yahoo_page)
 
     y.organic_results(10)
     y.sponsored_results(10)
     
-    self.write_seach_results(y.organic, y.sponsored_cites)
+    self.write_seach_results(y.organic, y.sponsored_cites, y.ad_positions)
     self.output.write("\n")
 
     self.export_links_to_files(search_term, y.organic, '_yahoo_OL')
