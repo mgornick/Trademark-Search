@@ -2,12 +2,12 @@ require 'rubygems'
 require 'nokogiri'
 
 class BingCrawler
-  attr_accessor :organic, :page, :sponsored_cites, :sponsored_adurls
+  attr_accessor :organic, :page, :sponsored_cites, :ad_positions
   
   def initialize(webpage)
     self.organic = []
-    self.sponsored_adurls = []
     self.sponsored_cites = []
+    self.ad_positions = []
     self.page = webpage
   end
   
@@ -59,14 +59,14 @@ class BingCrawler
   end
   
   def sponsored_results(number)
-    self.sponsored_adurls = []
     self.sponsored_cites = []
+    self.ad_positions = []
     
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     # grabbing the cite tag
-    results = doc.css("ul[@onmouseover='return true']/li/div/cite")
-    results.each do |link|
+    top_results = doc.css("div[@class='sb_adsWv2']/ul[@onmouseover='return true']/li/div[@class='sb_add sb_adW']/cite")
+    top_results.each do |link|
       cite_link = self.remove_html(link.to_s)
       cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
       if cite_link.scan('http').first
@@ -74,7 +74,33 @@ class BingCrawler
       else
         self.sponsored_cites << "http://" + cite_link
       end
+      ad_positions << 'Top'
     end
+    
+    right_results = doc.css("div[@class='sb_adsNv2']/ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/cite")
+    right_results.each do |link|
+      cite_link = self.remove_html(link.to_s)
+      cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
+      if cite_link.scan('http').first
+        self.sponsored_cites << cite_link
+      else
+        self.sponsored_cites << "http://" + cite_link
+      end
+      ad_positions << 'Right'
+    end
+    
+    bottom_results = doc.css("div[@class='sb_adsWv2 sb_adsW2v2']/ul[@onmouseover='return true']/li/div[@class='sb_add sb_adW']/cite")
+    bottom_results.each do |link|
+      cite_link = self.remove_html(link.to_s)
+      cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
+      if cite_link.scan('http').first
+        self.sponsored_cites << cite_link
+      else
+        self.sponsored_cites << "http://" + cite_link
+      end
+      ad_positions << 'Bottom'
+    end
+    
     self.sponsored_cites = self.sponsored_cites[0..number-1]
     
     # results = doc.css("ul[@onmouseover='return true']/li/div[@class='sb_add sb_adN']/h3/a")

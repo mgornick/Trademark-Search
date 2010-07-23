@@ -11,7 +11,7 @@ describe "BingCrawler" do
     it "should retrieve the cite urls" do
       @bing_crawler.sponsored_results(10)
       @bing_crawler.sponsored_cites.size.should == 6
-      puts @bing_crawler.sponsored_cites.inspect
+      @bing_crawler.sponsored_cites.should == ["http://www.honda.com", "http://www.whypaysticker.com/honda", "http://honda.autodiscountgroup.com", "http://www.smartautosavings.com", "http://honda.carpricesecrets.com", "http://www.honda.com"]
     end
     
     it "should style the html page of bing" do
@@ -19,9 +19,16 @@ describe "BingCrawler" do
       index = html.rindex('.sa_cpt{position:absolute}')
       
       converted_html = @bing_crawler.convert_absolute_to_static(html, index)
-      puts converted_html.scan(/.sa_cpt{position:[a-z]*}/)
       pdf = PDFKit.new(html)
       pdf.to_file('spec/assets/bing.pdf')
+    end
+    
+    it "should determine the location of ads" do
+      @bing_crawler.sponsored_results(10)
+      @bing_crawler.sponsored_cites.size.should == 6
+      @bing_crawler.ad_positions.size.should == 6
+      @bing_crawler.ad_positions.should == ['Top', 'Right','Right','Right','Right','Bottom']
+      
     end
   end
 end
