@@ -16,5 +16,11 @@ describe "YahooCrawler" do
       @yahoo_crawler.sponsored_results(10)
       @yahoo_crawler.sponsored_cites.size.should == 6
     end
+    
+    it "should store the position of the ads" do
+      @yahoo_crawler.sponsored_results(10)
+      @yahoo_crawler.sponsored_cites.should == ["http://store.apple.com", "http://www.nextag.com/apple", "http://dominicks.com", "http://www.dealtime.com", "http://www.nextag.com/apple", "http://dominicks.com"]
+      @yahoo_crawler.ad_positions.should == ['Top', 'Right', 'Right', 'Right', 'Bottom', 'Bottom']
+    end
   end
 end
