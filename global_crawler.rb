@@ -14,11 +14,15 @@ class GlobalCrawler
     trademarks = self.load_file
     self.init_excel_header
     
+    if !File.directory?('trademarks')
+      FileUtils.mkdir('trademarks') #makes folder for that trademark
+    end
+    
     trademarks.each do |trademark|
-      if !File.directory?(trademark)
-        FileUtils.mkdir(trademark) #makes folder for that trademark
+      if !File.directory?('trademarks/' + trademark)
+        FileUtils.mkdir('trademarks/' + trademark) #makes folder for that trademark
       end
-      self.output.write(trademark.to_s + ", ")
+      self.output.write(trademark.to_s + " \t ")
       self.search_bing(trademark)
       self.search_google(trademark)
       self.search_yahoo(trademark)
@@ -194,7 +198,7 @@ class GlobalCrawler
     
     sponsored_string = ""
     sponsored_cites.each_index do |i|
-      sponsored_string << sponsored_cites[i] + " " + ad_positions[i] + " \t "
+      sponsored_string << ad_positions[i] + " " + sponsored_cites[i] + " \t "
     end
     self.output.write(sponsored_string)
     

@@ -15,7 +15,7 @@ describe "GoogleCrawler" do
     end
 
     it "should create an array of x urls of organic results on a page" do
-      @google_crawler.organic_results(5).size.should == 5
+      @google_crawler.organic_results(10).size.should == 8
       @google_crawler.organic.should == ["http://www.honda.com/", "http://powersports.honda.com/", "http://automobiles.honda.com/", "http://en.wikipedia.org/wiki/Honda", "http://www.hondapowerequipment.com/", "http://world.honda.com/", "http://www.honda-engines.com/", "http://marine.honda.com/"]
       @google_crawler.organic_results(8).size.should == 8
     end
