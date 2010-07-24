@@ -12,7 +12,7 @@ class BingCrawler
   end
   
   def total_organic_results
-    self.page.scan(/[0-9|,]+ results/).first.split.first
+    self.page.scan(/[0-9|,]+ results/).first.split.first.gsub(",","").gsub("\n","")
   end
   
   def convert_absolute_to_static(html, index)

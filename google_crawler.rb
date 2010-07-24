@@ -14,7 +14,7 @@ class GoogleCrawler
   end
   
   def total_organic_results
-    self.page.scan(/About [0-9|,]+/).first.split.last
+    self.page.scan(/About [0-9|,]+/).first.split.last.gsub(",","").gsub("\n","")
   end
 
   def organic_results(number)

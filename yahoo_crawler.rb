@@ -12,7 +12,7 @@ class YahooCrawler
   end
   
   def total_organic_results
-    Nokogiri::HTML(self.page).css("strong[@id='resultCount']").children.first.to_s
+    Nokogiri::HTML(self.page).css("strong[@id='resultCount']").children.first.to_s.gsub(",","").gsub("\n","").gsub(" ","")
   end
 
   def organic_results(number)
@@ -50,8 +50,9 @@ class YahooCrawler
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     # top
-    top_results = doc.css("div[@class='ads horiz ']/ul[@class='spns reducepx-spnslist']/li/em")
-    
+    # top_results = doc.css("div[@class='ads']/ul[@class='spns reducepx-spnslist']/li/em/b")
+    top_results = doc.css("div[@id='main']/div[@class='ads horiz']/ul[@class='spns reducepx-spnslist']/li/em")
+    # puts top_results.inspect
     top_results.each do |link|
       cite_link = self.remove_html(link.to_s)
       cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase

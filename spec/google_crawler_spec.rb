@@ -9,7 +9,7 @@ describe "GoogleCrawler" do
     end
     
     it "should say the number of results" do
-      @google_crawler.total_organic_results.should == "218,000,000"
+      @google_crawler.total_organic_results.should == '218000000'
     end
 
     it "should init a google crawler object" do

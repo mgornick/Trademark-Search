@@ -264,7 +264,7 @@ class GlobalCrawler
     self.output.write(sponsored_string)
     
     # self.output.write(sponsored_cites.map {|i| i+" \t "}.to_s)
-    (10-search_engine.sponsored_cites.size).times {self.output.write(" \t \t")}# add additional columns when not 10 links
+    (15-search_engine.sponsored_cites.size).times {self.output.write(" \t \t")}# add additional columns when not 10 links
   end
   
   def search_bing(search_term)
@@ -302,6 +302,10 @@ class GlobalCrawler
     Capybara.click 'Search'
     
     yahoo_page = Capybara.page.body.to_s
+    
+    puts "---- \n \n"
+    puts yahoo_page
+    puts "---- \n \n"
     
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"

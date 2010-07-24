@@ -9,7 +9,7 @@ describe "BingCrawler" do
     end
     
     it "should get the number of results" do
-      @bing_crawler.total_organic_results.should == "157,000,000"
+      @bing_crawler.total_organic_results.should == '157000000'
     end
     
     it "should retrieve the cite urls" do
