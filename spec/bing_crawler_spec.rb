@@ -8,6 +8,10 @@ describe "BingCrawler" do
       @bing_crawler = BingCrawler.new(@page)
     end
     
+    it "should get the number of results" do
+      @bing_crawler.total_organic_results.should == "157,000,000"
+    end
+    
     it "should retrieve the cite urls" do
       @bing_crawler.sponsored_results(10)
       @bing_crawler.sponsored_cites.size.should == 6

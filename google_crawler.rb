@@ -12,6 +12,10 @@ class GoogleCrawler
     self.sponsored_cites = []
     self.page = webpage
   end
+  
+  def total_organic_results
+    self.page.scan(/About [0-9|,]+/).first.split.last
+  end
 
   def organic_results(number)
     self.organic = []

@@ -10,6 +10,10 @@ class YahooCrawler
     self.sponsored_cites = []
     self.page = webpage
   end
+  
+  def total_organic_results
+    Nokogiri::HTML(self.page).css("strong[@id='resultCount']").children.first.to_s
+  end
 
   def organic_results(number)
     self.organic = []

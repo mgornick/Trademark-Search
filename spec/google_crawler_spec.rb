@@ -7,6 +7,10 @@ describe "GoogleCrawler" do
       @page = File.read("spec/assets/google.html")
       @google_crawler = GoogleCrawler.new(@page)
     end
+    
+    it "should say the number of results" do
+      @google_crawler.total_organic_results.should == "218,000,000"
+    end
 
     it "should init a google crawler object" do
       @google_crawler.organic.class.should == Array

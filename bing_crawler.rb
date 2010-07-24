@@ -11,6 +11,10 @@ class BingCrawler
     self.page = webpage
   end
   
+  def total_organic_results
+    self.page.scan(/[0-9|,]+ results/).first.split.first
+  end
+  
   def convert_absolute_to_static(html, index)
     start = index + 17
     html[start]   = 's'

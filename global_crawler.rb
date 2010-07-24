@@ -50,16 +50,36 @@ class GlobalCrawler
     header << 'Bing_OL8'
     header << 'Bing_OL9'
     
+    header << 'Bing_SL0 Position'    
     header << 'Bing_SL0'
+    header << 'Bing_SL1 Position' 
     header << 'Bing_SL1'
+    header << 'Bing_SL2 Position' 
     header << 'Bing_SL2'
+    header << 'Bing_SL3 Position' 
     header << 'Bing_SL3'
+    header << 'Bing_SL4 Position' 
     header << 'Bing_SL4'
+    header << 'Bing_SL5 Position' 
     header << 'Bing_SL5'
+    header << 'Bing_SL6 Position' 
     header << 'Bing_SL6'
+    header << 'Bing_SL7 Position' 
     header << 'Bing_SL7'
+    header << 'Bing_SL8 Position' 
     header << 'Bing_SL8'
+    header << 'Bing_SL9 Position' 
     header << 'Bing_SL9'
+    header << 'Bing_SL10 Position' 
+    header << 'Bing_SL10'
+    header << 'Bing_SL11 Position' 
+    header << 'Bing_SL11'
+    header << 'Bing_SL12 Position' 
+    header << 'Bing_SL12'
+    header << 'Bing_SL13 Position' 
+    header << 'Bing_SL13'
+    header << 'Bing_SL14 Position' 
+    header << 'Bing_SL14'
     
     header << 'Google Total OL'
     header << 'Google Total SL'
@@ -73,17 +93,37 @@ class GlobalCrawler
     header << 'Google_OL7'
     header << 'Google_OL8'
     header << 'Google_OL9'
-               
+
+    header << 'Google_SL0 Position'               
     header << 'Google_SL0'
+    header << 'Google_SL1 Position'
     header << 'Google_SL1'
+    header << 'Google_SL2 Position'
     header << 'Google_SL2'
+    header << 'Google_SL3 Position'
     header << 'Google_SL3'
+    header << 'Google_SL4 Position'
     header << 'Google_SL4'
+    header << 'Google_SL5 Position'
     header << 'Google_SL5'
+    header << 'Google_SL6 Position'
     header << 'Google_SL6'
+    header << 'Google_SL7 Position'
     header << 'Google_SL7'
+    header << 'Google_SL8 Position'
     header << 'Google_SL8'
+    header << 'Google_SL9 Position'
     header << 'Google_SL9'
+    header << 'Google_SL10 Position'
+    header << 'Google_SL10'
+    header << 'Google_SL11 Position'
+    header << 'Google_SL11'
+    header << 'Google_SL12 Position'
+    header << 'Google_SL12'
+    header << 'Google_SL13 Position'
+    header << 'Google_SL13'
+    header << 'Google_SL14 Position'
+    header << 'Google_SL14'
     
     header << 'Yahoo Total OL'
     header << 'Yahoo Total SL'
@@ -98,16 +138,37 @@ class GlobalCrawler
     header << 'Yahoo_OL8'
     header << 'Yahoo_OL9'
     
+    header << 'Yahoo_SL0 Position'
     header << 'Yahoo_SL0'
+    header << 'Yahoo_SL1 Position'
     header << 'Yahoo_SL1'
+    header << 'Yahoo_SL2 Position'
     header << 'Yahoo_SL2'
+    header << 'Yahoo_SL3 Position'
     header << 'Yahoo_SL3'
+    header << 'Yahoo_SL4 Position'
     header << 'Yahoo_SL4'
+    header << 'Yahoo_SL5 Position'
     header << 'Yahoo_SL5'
+    header << 'Yahoo_SL6 Position'
     header << 'Yahoo_SL6'
+    header << 'Yahoo_SL7 Position'
     header << 'Yahoo_SL7'
+    header << 'Yahoo_SL8 Position'
     header << 'Yahoo_SL8'
+    header << 'Yahoo_SL9 Position'
     header << 'Yahoo_SL9'
+    header << 'Yahoo_SL10 Position'
+    header << 'Yahoo_SL10'
+    header << 'Yahoo_SL11 Position'
+    header << 'Yahoo_SL11'
+    header << 'Yahoo_SL12 Position'
+    header << 'Yahoo_SL12'
+    header << 'Yahoo_SL13 Position'
+    header << 'Yahoo_SL13'
+    header << 'Yahoo_SL14 Position'
+    header << 'Yahoo_SL14'
+
     
     head = header.map {|i| i + " \t "}.to_s
     
@@ -181,29 +242,29 @@ class GlobalCrawler
     
     g = GoogleCrawler.new(google_page)
     g.organic_results(10)
-    g.sponsored_results(10)
+    g.sponsored_results(15)
     
-    self.write_seach_results(g.organic, g.sponsored_cites, g.ad_positions)
+    self.write_seach_results(g)
         
     self.export_links_to_files(search_term, g.organic, '_google_OL')
     self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
   end
   
-  def write_seach_results(organic, sponsored_cites, ad_positions)
-    self.output.write(organic.size.to_s + " \t")
-    self.output.write(sponsored_cites.size.to_s + " \t ")
+  def write_seach_results(search_engine)
+    self.output.write(search_engine.total_organic_results + " \t")
+    self.output.write(search_engine.sponsored_cites.size.to_s + " \t ")
     
-    self.output.write(organic.map {|i| i+" \t "}.to_s)
-    (10-organic.size).times {self.output.write(" \t ")} # add additional columns when not 10 links
+    self.output.write(search_engine.organic.map {|i| i+" \t "}.to_s)
+    (10-search_engine.organic.size).times {self.output.write(" \t ")} # add additional columns when not 10 links
     
     sponsored_string = ""
-    sponsored_cites.each_index do |i|
-      sponsored_string << ad_positions[i] + " " + sponsored_cites[i] + " \t "
+    search_engine.sponsored_cites.each_index do |i|
+      sponsored_string << search_engine.ad_positions[i] + " \t " + search_engine.sponsored_cites[i] + " \t "
     end
     self.output.write(sponsored_string)
     
     # self.output.write(sponsored_cites.map {|i| i+" \t "}.to_s)
-    (10-sponsored_cites.size).times {self.output.write(" \t ")}# add additional columns when not 10 links
+    (10-search_engine.sponsored_cites.size).times {self.output.write(" \t \t")}# add additional columns when not 10 links
   end
   
   def search_bing(search_term)
@@ -223,9 +284,9 @@ class GlobalCrawler
     
     b = BingCrawler.new(bing_page)
     b.organic_results(10)
-    b.sponsored_results(10)
+    b.sponsored_results(15)
     
-    self.write_seach_results(b.organic, b.sponsored_cites, b.ad_positions)
+    self.write_seach_results(b)
     
     self.export_links_to_files(search_term, b.organic, '_bing_OL')
     self.export_links_to_files(search_term, b.sponsored_cites, '_bing_SL')    
@@ -250,9 +311,9 @@ class GlobalCrawler
     y = YahooCrawler.new(yahoo_page)
 
     y.organic_results(10)
-    y.sponsored_results(10)
+    y.sponsored_results(15)
     
-    self.write_seach_results(y.organic, y.sponsored_cites, y.ad_positions)
+    self.write_seach_results(y)
     self.output.write("\n")
 
     self.export_links_to_files(search_term, y.organic, '_yahoo_OL')

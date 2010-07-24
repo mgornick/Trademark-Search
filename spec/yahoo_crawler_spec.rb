@@ -7,6 +7,10 @@ describe "YahooCrawler" do
       @yahoo_crawler = YahooCrawler.new(@page)
     end
     
+    it "should get the number of results" do
+      @yahoo_crawler.total_organic_results.should == '157,000,000'
+    end
+    
     # it "should retrieve the ad urls" do
     #   @yahoo_crawler.sponsored_results(10)
     #   @yahoo_crawler.sponsored_adurls.size.should == 6
