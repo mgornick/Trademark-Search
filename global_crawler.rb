@@ -19,8 +19,8 @@ class GlobalCrawler
     end
     
     trademarks.each do |trademark|
-      if !File.directory?('trademarks/' + trademark)
-        FileUtils.mkdir('trademarks/' + trademark) #makes folder for that trademark
+      if !File.directory?('trademarks/' + trademark.to_s)
+        FileUtils.mkdir('trademarks/' + trademark.to_s) #makes folder for that trademark
       end
       self.output.write(trademark.to_s + " \t ")
       self.search_bing(trademark)
@@ -170,7 +170,7 @@ class GlobalCrawler
     header << 'Yahoo_SL14'
 
     
-    head = header.map {|i| i + " \t "}.to_s
+    head = header.map {|i| i.to_s + " \t "}.to_s
     
     self.output.write("#{head}\n")
   end
@@ -181,47 +181,47 @@ class GlobalCrawler
   end
   
   def fetch_page(url)
-    puts "Grabbing: "+url 
+    puts "Grabbing: "+url.to_s
     Net::HTTP.get(URI.parse(url))
   end
 
   def export_links_to_files(search_term, organic_results, prefix)
-    puts "Running "+prefix+": "+search_term
+    puts "Running "+prefix.to_s+": "+search_term.to_s
     organic_results.each_index do |index|
       begin
         puts "Converting #{organic_results[index]} to PDF"
         if self.fetch_page(organic_results[index])
-          PDFKit.new(organic_results[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+          PDFKit.new(organic_results[index]).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+prefix.to_s+index.to_s+'.pdf')
         end
           
       rescue Exception => e
-        puts "Caught an exception trying to generate PDF for " + organic_results[index]
-        puts "Error message" + e
-        PDFKit.new("Page failed to load:" + organic_results[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+        puts "Caught an exception trying to generate PDF for " + organic_results[index].to_s
+        puts "Error message" + e.to_s
+        PDFKit.new("Page failed to load:" + organic_results[index].to_s).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+prefix.to_s+index.to_s+'.pdf')
       end
     end
   end
   
   def export_sponsored_links_to_files(search_term, cites, prefix, adurls)
-    puts "Exporting ads "+prefix+": "+search_term
+    puts "Exporting ads "+prefix.to_s+": "+search_term.to_s
     cites.each_index do |index|
       puts "Converting #{cites[index]} to PDF"
       begin
         if self.fetch_page(cites[index])
-          PDFKit.new(cites[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+          PDFKit.new(cites[index]).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+prefix.to_s+index.to_s+'.pdf')
         end
       rescue Exception => e0
-        puts "Caught an exception trying to generate PDF for " + cites[index]
-        puts "Error message" + e0
+        puts "Caught an exception trying to generate PDF for " + cites[index].to_s
+        puts "Error message" + e0.to_s
         begin
-          puts "Trying the cite link: " + adurls[index]
+          puts "Trying the cite link: " + adurls[index].to_s
           if self.fetch_page(adurls[index])
-            PDFKit.new(adurls[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+            PDFKit.new(adurls[index]).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+prefix.to_s+index.to_s+'.pdf')
           end
         rescue Exception => e1
-          puts "Could not generate PDF for: " + adurls[index]
-          puts "Error message " + e1
-          PDFKit.new("Page failed to load:" + cites[index]).to_file('trademarks/'+search_term+'/'+search_term+prefix+index.to_s+'.pdf')
+          puts "Could not generate PDF for: " + adurls[index].to_s
+          puts "Error message " + e1.to_s
+          PDFKit.new("Page failed to load:" + cites[index]).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+prefix.to_s+index.to_s+'.pdf')
         end
       end
     end
@@ -234,11 +234,11 @@ class GlobalCrawler
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://www.google.com'
     Capybara.visit('/')
-    Capybara.fill_in "q", :with => search_term
+    Capybara.fill_in "q", :with => search_term.to_s
     Capybara.click 'Google Search'
     
     google_page = Capybara.page.body.to_s
-    PDFKit.new(google_page).to_file('trademarks/'+search_term+'/'+search_term+'_google.pdf')
+    PDFKit.new(google_page).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_google.pdf')
     
     g = GoogleCrawler.new(google_page)
     g.organic_results(10)
@@ -251,15 +251,15 @@ class GlobalCrawler
   end
   
   def write_seach_results(search_engine)
-    self.output.write(search_engine.total_organic_results + " \t")
+    self.output.write(search_engine.total_organic_results.to_s + " \t")
     self.output.write(search_engine.sponsored_cites.size.to_s + " \t ")
     
-    self.output.write(search_engine.organic.map {|i| i+" \t "}.to_s)
+    self.output.write(search_engine.organic.map {|i| i.to_s+" \t "}.to_s)
     (10-search_engine.organic.size).times {self.output.write(" \t ")} # add additional columns when not 10 links
     
     sponsored_string = ""
     search_engine.sponsored_cites.each_index do |i|
-      sponsored_string << search_engine.ad_positions[i] + " \t " + search_engine.sponsored_cites[i] + " \t "
+      sponsored_string << search_engine.ad_positions[i].to_s + " \t " + search_engine.sponsored_cites[i].to_s + " \t "
     end
     self.output.write(sponsored_string)
     
@@ -273,14 +273,14 @@ class GlobalCrawler
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://www.bing.com'
     Capybara.visit('/')
-    Capybara.fill_in "sb_form_q", :with => search_term
+    Capybara.fill_in "sb_form_q", :with => search_term.to_s
     Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
     b = BingCrawler.new(bing_page)
     index = bing_page.rindex('.sa_cpt{position:absolute}')
     bing_page = b.convert_absolute_to_static(bing_page, index)
-    PDFKit.new(bing_page).to_file('trademarks/'+search_term+'/'+search_term+'_bing.pdf')
+    PDFKit.new(bing_page).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_bing.pdf')
     
     b = BingCrawler.new(bing_page)
     b.organic_results(10)
@@ -298,7 +298,7 @@ class GlobalCrawler
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://search.yahoo.com/' # http://search.yahoo.com/ loads faster and it's easier to find the textfield
     Capybara.visit('/')
-    Capybara.fill_in 'p', :with => search_term
+    Capybara.fill_in 'p', :with => search_term.to_s
     Capybara.click 'Search'
     
     yahoo_page = Capybara.page.body.to_s
@@ -310,7 +310,7 @@ class GlobalCrawler
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"
     puts yahoo_pdf.stylesheets # add custome styling so yahoo doesn't add the line through all the text
-    yahoo_pdf.to_file('trademarks/'+search_term+'/'+search_term+'_yahoo.pdf')
+    yahoo_pdf.to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_yahoo.pdf')
   
     y = YahooCrawler.new(yahoo_page)
 
