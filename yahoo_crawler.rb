@@ -57,9 +57,9 @@ class YahooCrawler
       cite_link = self.remove_html(link.to_s)
       cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
       if cite_link.scan('http').first
-        self.sponsored_cites << cite_link
+        self.sponsored_cites << cite_link.to_s
       else
-        self.sponsored_cites << "http://" + cite_link
+        self.sponsored_cites << "http://" + cite_link.to_s
       end
       self.ad_positions << 'Top'
     end
@@ -70,9 +70,9 @@ class YahooCrawler
       cite_link = self.remove_html(link.to_s)
       cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
       if cite_link.scan('http').first
-        self.sponsored_cites << cite_link
+        self.sponsored_cites << cite_link.to_s
       else
-        self.sponsored_cites << "http://" + cite_link
+        self.sponsored_cites << "http://" + cite_link.to_s
       end
       self.ad_positions << 'Right'
     end
@@ -83,9 +83,9 @@ class YahooCrawler
       cite_link = self.remove_html(link.to_s)
       cite_link = cite_link.gsub(' ', '').gsub("\n", '').gsub("\r", '').gsub("\t",'').downcase
       if cite_link.scan('http').first
-        self.sponsored_cites << cite_link
+        self.sponsored_cites << cite_link.to_s
       else
-        self.sponsored_cites << "http://" + cite_link
+        self.sponsored_cites << "http://" + cite_link.to_s
       end
       self.ad_positions << 'Bottom'
     end

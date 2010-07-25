@@ -11,25 +11,26 @@ class GlobalCrawler
   
   def start
     begin
-    trademarks = self.load_file
-    self.init_excel_header
-    
-    if !File.directory?('trademarks')
-      FileUtils.mkdir('trademarks') #makes folder for that trademark
-    end
-    
-    trademarks.each do |trademark|
-      if !File.directory?('trademarks/' + trademark.to_s)
-        FileUtils.mkdir('trademarks/' + trademark.to_s) #makes folder for that trademark
+      trademarks = self.load_file
+      self.init_excel_header
+      
+      if !File.directory?('trademarks')
+        FileUtils.mkdir('trademarks') #makes folder for that trademark
       end
-      self.output.write(trademark.to_s + " \t ")
-      self.search_bing(trademark)
-      self.search_google(trademark)
-      self.search_yahoo(trademark)
-    end
+      
+      trademarks.each do |trademark|
+        if !File.directory?('trademarks/' + trademark.to_s)
+          FileUtils.mkdir('trademarks/' + trademark.to_s) #makes folder for that trademark
+        end
+        self.output.write(trademark.to_s + " \t ")
+        self.search_bing(trademark)
+        self.search_google(trademark)
+        self.search_yahoo(trademark)
+      end
       
     rescue Exception => e
       puts "Encountered an error: " + e
+      puts e.inspect
       self.output.close
     end
   end
@@ -189,11 +190,10 @@ class GlobalCrawler
     puts "Running "+prefix.to_s+": "+search_term.to_s
     organic_results.each_index do |index|
       begin
-        puts "Converting #{organic_results[index]} to PDF"
         if self.fetch_page(organic_results[index])
+          puts "Converting #{organic_results[index]} to PDF"
           PDFKit.new(organic_results[index]).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+prefix.to_s+index.to_s+'.pdf')
         end
-          
       rescue Exception => e
         puts "Caught an exception trying to generate PDF for " + organic_results[index].to_s
         puts "Error message" + e.to_s
@@ -302,10 +302,6 @@ class GlobalCrawler
     Capybara.click 'Search'
     
     yahoo_page = Capybara.page.body.to_s
-    
-    puts "---- \n \n"
-    puts yahoo_page
-    puts "---- \n \n"
     
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"
