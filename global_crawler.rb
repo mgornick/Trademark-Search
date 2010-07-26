@@ -24,8 +24,8 @@ class GlobalCrawler
         end
         self.output.write(trademark.to_s + " \t ")
         self.search_bing(trademark)
-        #self.search_google(trademark)
-       # self.search_yahoo(trademark)
+        self.search_google(trademark)
+        self.search_yahoo(trademark)
       end
       
     rescue Exception => e
