@@ -24,8 +24,8 @@ class GlobalCrawler
         end
         self.output.write(trademark.to_s + " \t ")
         self.search_bing(trademark)
-        self.search_google(trademark)
-        self.search_yahoo(trademark)
+        #self.search_google(trademark)
+       # self.search_yahoo(trademark)
       end
       
     rescue Exception => e
@@ -277,10 +277,17 @@ class GlobalCrawler
     Capybara.click 'sb_form_go'
     
     bing_page = Capybara.page.body.to_s
-    b = BingCrawler.new(bing_page)
-    index = bing_page.rindex('.sa_cpt{position:absolute}')
-    bing_page = b.convert_absolute_to_static(bing_page, index)
-    PDFKit.new(bing_page).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_bing.pdf')
+    #b = BingCrawler.new(bing_page)
+    #index = bing_page.rindex('.sa_cpt{position:absolute}')
+    #bing_page = b.convert_absolute_to_static(bing_page, index)
+    #PDFKit.new(bing_page).to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_bing.pdf')
+    
+    # added static bing styling to fix error
+    bing_pdf = PDFKit.new(bing_page)
+    bing_pdf.stylesheets << "bing_styling.css"
+    puts bing_pdf.stylesheets # add custom styling so yahoo doesn't add the line through all the text
+    bing_pdf.to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_bing.pdf')
+  
     
     b = BingCrawler.new(bing_page)
     b.organic_results(10)
@@ -305,7 +312,7 @@ class GlobalCrawler
     
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"
-    puts yahoo_pdf.stylesheets # add custome styling so yahoo doesn't add the line through all the text
+    puts yahoo_pdf.stylesheets # add custom styling so yahoo doesn't add the line through all the text
     yahoo_pdf.to_file('trademarks/'+search_term.to_s+'/'+search_term.to_s+'_yahoo.pdf')
   
     y = YahooCrawler.new(yahoo_page)
