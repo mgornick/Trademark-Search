@@ -35,6 +35,10 @@ class GlobalCrawler
     end
   end
   
+  def self.clean_trademark(term)
+    term.scan(/\w+|\n+/).to_s
+  end
+  
   def init_excel_header
     self.output = File.new("trademark_results_"+Time.now.strftime("%m-%d-%Y_%I:%M%p")+".csv", "w")
     header = ['Trademark']
