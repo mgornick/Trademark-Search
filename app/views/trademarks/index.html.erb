@@ -1,0 +1,22 @@
+<h1>Listing trademarks</h1>
+
+<table>
+  <tr>
+    <th>Term</th>
+    <th>Complete</th>
+  </tr>
+
+<% @trademarks.each do |trademark| %>
+  <tr>
+    <td><%=h trademark.term %></td>
+    <td><%=h trademark.complete %></td>
+    <td><%= link_to 'Show', trademark %></td>
+    <td><%= link_to 'Edit', edit_trademark_path(trademark) %></td>
+    <td><%= link_to 'Destroy', trademark, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New trademark', new_trademark_path %>

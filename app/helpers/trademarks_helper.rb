@@ -1,0 +1,2 @@
+module TrademarksHelper
+end

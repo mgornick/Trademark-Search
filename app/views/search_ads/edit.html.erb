@@ -1,0 +1,24 @@
+<h1>Editing search_ad</h1>
+
+<% form_for(@search_ad) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :url %><br />
+    <%= f.text_field :url %>
+  </p>
+  <p>
+    <%= f.label :search_engine %><br />
+    <%= f.text_field :search_engine %>
+  </p>
+  <p>
+    <%= f.label :location %><br />
+    <%= f.text_field :location %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @search_ad %> |
+<%= link_to 'Back', search_ads_path %>

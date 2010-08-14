@@ -1,0 +1,2 @@
+module SearchAdsHelper
+end

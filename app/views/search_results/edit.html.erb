@@ -1,0 +1,20 @@
+<h1>Editing search_result</h1>
+
+<% form_for(@search_result) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :url %><br />
+    <%= f.text_field :url %>
+  </p>
+  <p>
+    <%= f.label :search_engine %><br />
+    <%= f.text_field :search_engine %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @search_result %> |
+<%= link_to 'Back', search_results_path %>

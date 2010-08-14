@@ -1,0 +1,20 @@
+<h1>Editing trademark</h1>
+
+<% form_for(@trademark) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :term %><br />
+    <%= f.text_field :term %>
+  </p>
+  <p>
+    <%= f.label :complete %><br />
+    <%= f.check_box :complete %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @trademark %> |
+<%= link_to 'Back', trademarks_path %>

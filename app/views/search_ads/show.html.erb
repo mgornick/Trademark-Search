@@ -1,0 +1,18 @@
+<p>
+  <b>Url:</b>
+  <%=h @search_ad.url %>
+</p>
+
+<p>
+  <b>Search engine:</b>
+  <%=h @search_ad.search_engine %>
+</p>
+
+<p>
+  <b>Location:</b>
+  <%=h @search_ad.location %>
+</p>
+
+
+<%= link_to 'Edit', edit_search_ad_path(@search_ad) %> |
+<%= link_to 'Back', search_ads_path %>

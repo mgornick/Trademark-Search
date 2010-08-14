@@ -1,0 +1,24 @@
+<h1>Listing search_ads</h1>
+
+<table>
+  <tr>
+    <th>Url</th>
+    <th>Search engine</th>
+    <th>Location</th>
+  </tr>
+
+<% @search_ads.each do |search_ad| %>
+  <tr>
+    <td><%=h search_ad.url %></td>
+    <td><%=h search_ad.search_engine %></td>
+    <td><%=h search_ad.location %></td>
+    <td><%= link_to 'Show', search_ad %></td>
+    <td><%= link_to 'Edit', edit_search_ad_path(search_ad) %></td>
+    <td><%= link_to 'Destroy', search_ad, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New search_ad', new_search_ad_path %>
