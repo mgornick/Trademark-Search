@@ -8,6 +8,20 @@
   <%=h @trademark.complete %>
 </p>
 
+<p>
+  <p>Organic links:</p>
+  <% @trademark.search_results.each do |result| %>
+    <p><%= link_to result.url.to_s %></p>
+  <% end %>
+</p>
+
+<p>
+  <p>Sponsored links:</p>
+  <% @trademark.search_ads.each do |ad| %>
+    <p><%= link_to ad.url.to_s %></p>
+  <% end %>
+</p>
+
 
 <%= link_to 'Edit', edit_trademark_path(@trademark) %> |
 <%= link_to 'Back', trademarks_path %>

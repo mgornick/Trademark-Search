@@ -3,7 +3,8 @@ class CreateSearchResults < ActiveRecord::Migration
     create_table :search_results do |t|
       t.string :url
       t.string :search_engine
-
+      t.integer :trademark_id
+      
       t.timestamps
     end
   end

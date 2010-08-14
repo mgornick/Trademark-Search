@@ -13,7 +13,7 @@ class TrademarksController < ApplicationController
   # GET /trademarks/1
   # GET /trademarks/1.xml
   def show
-    @trademark = Trademark.find(params[:id])
+    @trademark = Trademark.find(params[:id], :include => [:search_ads, :search_results])
 
     respond_to do |format|
       format.html # show.html.erb

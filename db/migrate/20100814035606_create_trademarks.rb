@@ -3,6 +3,9 @@ class CreateTrademarks < ActiveRecord::Migration
     create_table :trademarks do |t|
       t.string :term
       t.boolean :complete
+      t.text :bing_search_page
+      t.text :google_search_page
+      t.text :yahoo_search_page
 
       t.timestamps
     end

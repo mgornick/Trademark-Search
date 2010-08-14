@@ -4,6 +4,7 @@ class CreateSearchAds < ActiveRecord::Migration
       t.string :url
       t.string :search_engine
       t.string :location
+      t.integer :trademark_id
 
       t.timestamps
     end
