@@ -1,13 +1,9 @@
 <h2><%=h @trademark.term %></h2>
 
-<p>
-  <b>Complete:</b>
-  <%=h @trademark.complete %>
-</p>
+<p><%= link_to 'Edit Trademark', edit_trademark_path(@trademark) %></p><br />
+<p><%= link_to '&laquo; Back to Trademarks', trademarks_path %></p>
 
 <%= render :partial => 'google' %>
 <%= render :partial => 'yahoo' %>
 <%= render :partial => 'bing' %>
 
-<%= link_to 'Edit', edit_trademark_path(@trademark) %> |
-<%= link_to 'Back', trademarks_path %>

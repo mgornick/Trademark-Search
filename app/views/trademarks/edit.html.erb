@@ -1,4 +1,6 @@
-<h1>Editing trademark</h1>
+<h1>Editing Trademark</h1>
+
+<p><%= link_to '&laquo; Back', @trademark %></p>
 
 <% form_for(@trademark) do |f| %>
   <%= f.error_messages %>
@@ -15,6 +17,3 @@
     <%= f.submit 'Update' %>
   </p>
 <% end %>
-
-<%= link_to 'Show', @trademark %> |
-<%= link_to 'Back', trademarks_path %>

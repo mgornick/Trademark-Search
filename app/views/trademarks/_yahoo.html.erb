@@ -1,23 +1,24 @@
 <div id='yahoo'>
+  <h3>Yahoo</h3>
   <%= link_to "Yahoo Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :search_page => 'yahoo', :filename => "#{@trademark.term}_yahoo.pdf" %><br />
   
-  <p>Organic Links:</p>
-  <ul>
+  <p><strong>Organic Links</strong></p>
+  <ol>
   <% index = 0 %>
   <% @trademark.search_results.each do |result| %>
     <% if result.search_engine == "Yahoo" %>
       <li>
         <%= link_to "#{@trademark.term}_yahoo_OL#{index}.pdf", :controller => :search_results, :action => :show, :id => result, :filename => "#{@trademark.term}_yahoo_OL#{index}.pdf" %><br />
-        <small> <%= result.url %></small>
+        <small><%= result.url %></small>
       </li>
       <% index = index + 1 %>
     <% end %>  
     
   <% end %>
-  </ul>
+  </ol>
   
-  <p>Sponsored Links:</p>
-  <ul>
+  <p><strong>Sponsored Links</strong></p>
+  <ol>
   <% index = 0 %>
   <% @trademark.search_ads.each do |ad| %>
     <% if ad.search_engine == "Yahoo" %>
@@ -30,5 +31,5 @@
     <% end %>  
     
   <% end %>
-  </ul>
+  </ol>
 </div>

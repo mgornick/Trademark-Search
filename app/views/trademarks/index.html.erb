@@ -1,3 +1,7 @@
+<p class="right">
+	<%= link_to 'New Trademark', new_trademark_path %>
+</p>
+
 <h2>Trademarks</h2>
 
 <table>
@@ -8,15 +12,10 @@
 
 <% @trademarks.each do |trademark| %>
   <tr class="<%= cycle("even", "odd") %>">
-    <td><%=h trademark.term %></td>
-    <td><%=h trademark.complete %></td>
-    <td><%= link_to 'Show', trademark %></td>
-    <td><%= link_to 'Edit', edit_trademark_path(trademark) %></td>
-    <td><%= link_to 'Destroy', trademark, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to trademark.term, trademark %></td>
+    <td style="text-transform:uppercase; font-size:12px;"><%=h trademark.complete %></td>
   </tr>
 <% end %>
 </table>
 <%= will_paginate @trademarks %>
 <br />
-
-<%= link_to 'New trademark', new_trademark_path %>

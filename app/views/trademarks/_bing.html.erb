@@ -1,8 +1,9 @@
 <div id='bing'>
+  <h3>Bing</h3>
   <%= link_to "Bing Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :search_page => 'bing', :filename => "#{@trademark.term}_bing.pdf" %><br />
   
-  <p>Organic Links:</p>
-  <ul>
+  <p><strong>Organic Links</strong></p>
+  <ol>
   <% index = 0 %>
   <% @trademark.search_results.each do |result| %>
     <% if result.search_engine == "Bing" %>
@@ -14,10 +15,10 @@
     <% end %>  
     
   <% end %>
-  </ul>
+  </ol>
   
-  <p>Sponsored Links:</p>
-  <ul>
+  <p><strong>Sponsored Links</strong></p>
+  <ol>
   <% index = 0 %>
   <% @trademark.search_ads.each do |ad| %>
     <% if ad.search_engine == "Bing" %>
@@ -30,5 +31,5 @@
     <% end %>  
     
   <% end %>
-  </ul>
+  </ol>
 </div>
