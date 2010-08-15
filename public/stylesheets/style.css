@@ -20,11 +20,11 @@ th, td {
 }
 
 tr.even {
-	background:#eeeeee;	
+	background:#eee;	
 }
 
 tr.odd {
-	background:#ffffff;
+	background:#fff;
 }
 
 .pagination {
@@ -104,8 +104,8 @@ small {
 	text-align:left;
 	-moz-border-radius-topleft:10px;
 	-moz-border-radius-topright:10px;
-	-webkit-border-radius-topleft:10px;
-	-webkit-border-radius-topright:10px;
+	-webkit-border-radius-top-left:10px;
+	-webkit-border-radius-top-right:10px;
 }
 
 	#header h1 {
@@ -131,8 +131,8 @@ small {
 	width: 960px;
 	-moz-border-radius-bottomleft:10px;
 	-moz-border-radius-bottomright:10px;
-	-webkit-border-radius-bottomleft:10px;
-	-webkit-border-radius-bottomright:10px;
+	-webkit-border-radius-bottom-left:10px;
+	-webkit-border-radius-bottom-right:10px;
 }
 
 #content h2 {
@@ -154,7 +154,7 @@ small {
 #google h3, #bing h3, #yahoo h3 {
 	padding:9px 11px 6px 11px;
 	background:#eee;
-	border:1px solid #ccc;
+	border:1px solid #aaa;
 	font-size: 22px;
 	font-weight:bold;	
 }
