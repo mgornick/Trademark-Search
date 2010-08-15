@@ -13,7 +13,13 @@
 <% @trademarks.each do |trademark| %>
   <tr class="<%= cycle("even", "odd") %>">
     <td><%= link_to trademark.term, trademark %></td>
-    <td style="text-transform:uppercase; font-size:12px;"><%=h trademark.complete %></td>
+    <td style="text-transform:uppercase; font-size:12px;">
+	  <% if trademark.complete %>
+ 	    <%= image_tag 'accept.png' %>
+	  <% else %>
+	    <%= image_tag 'cross.png' %>
+	  <% end %>
+	</td>
   </tr>
 <% end %>
 </table>
