@@ -20,6 +20,7 @@ Rails::Initializer.run do |config|
   require 'bing_crawler'
   require 'yahoo_crawler'
   config.gem 'capybara'
+  config.gem 'pdfkit'
   # config.gem 'capybara/dsl'
   require 'net/http'
   require 'fileutils'

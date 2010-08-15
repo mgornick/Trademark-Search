@@ -13,11 +13,19 @@ class TrademarksController < ApplicationController
   # GET /trademarks/1
   # GET /trademarks/1.xml
   def show
-    @trademark = Trademark.find(params[:id], :include => [:search_ads, :search_results])
+    if params[:search_page]
+      @trademark = Trademark.find(params[:id])
+      html = @trademark.google_search_page if params[:search_page] == 'google'
+      html = @trademark.yahoo_search_page if params[:search_page] == 'yahoo'
+      html = @trademark.bing_search_page if params[:search_page] == 'bing'
+      
+      filename = params[:filename] || "#{Time.now.hash}.pdf"
+      filepath = "#{RAILS_ROOT}/tmp/#{filename}"
+      PDFKit.new(html).to_file(filepath)
 
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @trademark }
+      send_file filepath
+    else
+      @trademark = Trademark.find(params[:id], :include => [:search_ads, :search_results])
     end
   end
 

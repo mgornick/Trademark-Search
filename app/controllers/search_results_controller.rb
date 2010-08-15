@@ -13,12 +13,26 @@ class SearchResultsController < ApplicationController
   # GET /search_results/1
   # GET /search_results/1.xml
   def show
+    filename = params[:filename] || "#Time.now.hash}.pdf"
     @search_result = SearchResult.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @search_result }
-    end
+    filepath = "#{RAILS_ROOT}/tmp/#{filename}"
+    PDFKit.new(@search_result.url).to_file(filepath)
+    
+    send_file filepath
+    # send_data filepath
+    #     
+    #     send_data(PDFKit.new(@search_result.url).to_s, :filename => "search_result.pdf", :type => "application/pdf")
+    
+    # 
+    #     # pdf =  PDFKit.new("http://blog.seattlepi.com/worldairlinenews/archives/216993.asp")
+    #     # send_data(pdf, :filename => "file.pdf", :type => "application/pdf")
+    #     # SearchResult.find(params[:id])
+    # 
+    #     respond_to do |format|
+    #       format.html # show.html.erb
+    #       format.xml  { render :xml => @search_result }
+    #       format.pdf  { render :pdf => PDFKit.new(@search_result.url)}
+    #     end
   end
 
   # GET /search_results/new
