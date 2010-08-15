@@ -1,4 +1,4 @@
-<h1>Listing search_ads</h1>
+<h2>Listing search_ads</h2>
 
 <table>
   <tr>
@@ -8,7 +8,7 @@
   </tr>
 
 <% @search_ads.each do |search_ad| %>
-  <tr>
+  <tr class="<%= cycle("even", "odd") %>">
     <td><%=h search_ad.url %></td>
     <td><%=h search_ad.search_engine %></td>
     <td><%=h search_ad.location %></td>

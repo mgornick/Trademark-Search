@@ -1,13 +1,13 @@
 <div id='yahoo'>
-  <%= link_to "Yahoo Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :search_page => 'yahoo', :filename => "#{@trademark.term}_yahoo.pdf" %>
+  <%= link_to "Yahoo Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :search_page => 'yahoo', :filename => "#{@trademark.term}_yahoo.pdf" %><br />
   
-  <p>Yahoo Organic Links:</p>
+  <p>Organic Links:</p>
   <ul>
   <% index = 0 %>
   <% @trademark.search_results.each do |result| %>
     <% if result.search_engine == "Yahoo" %>
       <li>
-        <%= link_to "#{@trademark.term}_yahoo_OL#{index}.pdf", :controller => :search_results, :action => :show, :id => result, :filename => "#{@trademark.term}_yahoo_OL#{index}.pdf" %>
+        <%= link_to "#{@trademark.term}_yahoo_OL#{index}.pdf", :controller => :search_results, :action => :show, :id => result, :filename => "#{@trademark.term}_yahoo_OL#{index}.pdf" %><br />
         <small> <%= result.url %></small>
       </li>
       <% index = index + 1 %>
@@ -16,13 +16,13 @@
   <% end %>
   </ul>
   
-  <p>Yahoo Sponsored Links:</p>
+  <p>Sponsored Links:</p>
   <ul>
   <% index = 0 %>
   <% @trademark.search_ads.each do |ad| %>
     <% if ad.search_engine == "Yahoo" %>
       <li>
-        <%= link_to "#{@trademark.term}_yahoo_OL#{index}.pdf", :controller => :search_ads, :action => :show, :id => ad, :filename => "#{@trademark.term}_yahoo_OL#{index}.pdf" %>
+        <%= link_to "#{@trademark.term}_yahoo_OL#{index}.pdf", :controller => :search_ads, :action => :show, :id => ad, :filename => "#{@trademark.term}_yahoo_OL#{index}.pdf" %><br />
         <small> <%= ad.url %></small>
         <small> <%= ad.location %></small>
       </li>

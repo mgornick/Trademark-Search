@@ -1,4 +1,4 @@
-<h1>Listing trademarks</h1>
+<h2>Trademarks</h2>
 
 <table>
   <tr>
@@ -7,7 +7,7 @@
   </tr>
 
 <% @trademarks.each do |trademark| %>
-  <tr>
+  <tr class="<%= cycle("even", "odd") %>">
     <td><%=h trademark.term %></td>
     <td><%=h trademark.complete %></td>
     <td><%= link_to 'Show', trademark %></td>
