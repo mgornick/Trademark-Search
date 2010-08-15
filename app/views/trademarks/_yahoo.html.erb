@@ -23,9 +23,10 @@
   <% @trademark.search_ads.each do |ad| %>
     <% if ad.search_engine == "Yahoo" %>
       <li>
+        <small> <%= ad.location %></small>
         <%= link_to "#{@trademark.term}_yahoo_OL#{index}.pdf", :controller => :search_ads, :action => :show, :id => ad, :filename => "#{@trademark.term}_yahoo_OL#{index}.pdf" %><br />
         <small> <%= ad.url %></small>
-        <small> <%= ad.location %></small>
+        
       </li>
       <% index = index + 1 %>
     <% end %>  
