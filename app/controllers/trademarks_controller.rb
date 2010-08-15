@@ -2,7 +2,7 @@ class TrademarksController < ApplicationController
   # GET /trademarks
   # GET /trademarks.xml
   def index
-    @trademarks = Trademark.all
+    @trademarks = Trademark.paginate :page => params[:page]
 
     respond_to do |format|
       format.html # index.html.erb
