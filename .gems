@@ -1,0 +1,5 @@
+rails -v 2.3.5
+pdfkit
+capybara
+nokogiri
+will_paginate -v 2.3.11
