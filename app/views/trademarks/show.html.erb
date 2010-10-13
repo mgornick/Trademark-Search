@@ -1,27 +1,9 @@
-<p>
-  <b>Term:</b>
-  <%=h @trademark.term %>
-</p>
+<h2><%=h @trademark.term %></h2>
 
-<p>
-  <b>Complete:</b>
-  <%=h @trademark.complete %>
-</p>
+<p><%= link_to 'Edit Trademark', edit_trademark_path(@trademark) %></p><br />
+<p><%= link_to '&laquo; Back to Trademarks', trademarks_path %></p>
 
-<p>
-  <p>Organic links:</p>
-  <% @trademark.search_results.each do |result| %>
-    <p><%= link_to result.url.to_s %></p>
-  <% end %>
-</p>
+<%= render :partial => 'google' %>
+<%= render :partial => 'yahoo' %>
+<%= render :partial => 'bing' %>
 
-<p>
-  <p>Sponsored links:</p>
-  <% @trademark.search_ads.each do |ad| %>
-    <p><%= link_to ad.url.to_s %></p>
-  <% end %>
-</p>
-
-
-<%= link_to 'Edit', edit_trademark_path(@trademark) %> |
-<%= link_to 'Back', trademarks_path %>

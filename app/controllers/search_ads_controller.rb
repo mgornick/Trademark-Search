@@ -14,11 +14,11 @@ class SearchAdsController < ApplicationController
   # GET /search_ads/1.xml
   def show
     @search_ad = SearchAd.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @search_ad }
-    end
+    filename = params[:filename] || "#Time.now.hash}.pdf"
+    filepath = "#{RAILS_ROOT}/tmp/#{filename}"
+    PDFKit.new(@search_ad.url).to_file(filepath)
+    
+    send_file filepath
   end
 
   # GET /search_ads/new

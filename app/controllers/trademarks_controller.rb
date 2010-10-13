@@ -2,7 +2,7 @@ class TrademarksController < ApplicationController
   # GET /trademarks
   # GET /trademarks.xml
   def index
-    @trademarks = Trademark.all
+    @trademarks = Trademark.paginate :page => params[:page]
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,11 +13,29 @@ class TrademarksController < ApplicationController
   # GET /trademarks/1
   # GET /trademarks/1.xml
   def show
-    @trademark = Trademark.find(params[:id], :include => [:search_ads, :search_results])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @trademark }
+    if params[:search_page]
+      @trademark = Trademark.find(params[:id])
+      
+      filename = params[:filename] || "#{Time.now.hash}.pdf"
+      filepath = "#{RAILS_ROOT}/tmp/#{filename}"
+      
+      if params[:search_page] == 'google'
+        html = @trademark.google_search_page
+        PDFKit.new(html).to_file(filepath)
+      elsif params[:search_page] == 'yahoo'
+        html = @trademark.yahoo_search_page
+        yahoo_pdf = PDFKit.new(html)
+        yahoo_pdf.stylesheets << "yahoo_styling.css"
+        yahoo_pdf.to_file(filepath)
+      elsif params[:search_page] == 'bing'
+        html = @trademark.bing_search_page
+        bing_pdf = PDFKit.new(html)
+        bing_pdf.stylesheets << "bing_styling.css"
+        bing_pdf.to_file(filepath)
+      end
+      send_file filepath
+    else
+      @trademark = Trademark.find(params[:id], :include => [:search_ads, :search_results])
     end
   end
 

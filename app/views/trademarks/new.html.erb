@@ -1,4 +1,6 @@
-<h1>New trademark</h1>
+<h1>New Trademark</h1>
+
+<p><%= link_to '&laquo; Back to Trademarks', trademarks_path %></p>
 
 <% form_for(@trademark) do |f| %>
   <%= f.error_messages %>
@@ -15,5 +17,3 @@
     <%= f.submit 'Create' %>
   </p>
 <% end %>
-
-<%= link_to 'Back', trademarks_path %>

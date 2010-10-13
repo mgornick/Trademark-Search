@@ -19,8 +19,8 @@ class GlobalCrawler
       end
       
       trademarks.each do |trademark|
-        if !File.directory?('trademarks/' + trademark.scan(/[a-zA-Z0-9]/).to_s)
-          FileUtils.mkdir('trademarks/' + trademark.scan(/[a-zA-Z0-9]/).to_s) #makes folder for that trademark
+        if !File.directory?(self.filepath(trademark))
+          FileUtils.mkdir(self.filepath(trademark)) #makes folder for that trademark
         end
         # self.output.write(trademark.to_s + " \t ")
         # self.search_bing(trademark)
@@ -35,7 +35,11 @@ class GlobalCrawler
     end
   end
   
-  def self.clean_trademark(term)
+  def filepath(term)
+    'trademarks/'+self.clean_trademark(term)+'/'
+  end
+  
+  def clean_trademark(term)
     term.scan(/\w+|\n+/).to_s
   end
   
@@ -196,12 +200,12 @@ class GlobalCrawler
       begin
         if self.fetch_page(organic_results[index])
           puts "Converting #{organic_results[index]} to PDF"
-          PDFKit.new(organic_results[index]).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+prefix.to_s+index.to_s+'.pdf')
+          PDFKit.new(organic_results[index]).to_file(filepath(search_term)+self.clean_trademark(search_term)+prefix.to_s+index.to_s+'.pdf')
         end
       rescue Exception => e
         puts "Caught an exception trying to generate PDF for " + organic_results[index].to_s
         puts "Error message" + e.to_s
-        PDFKit.new("Page failed to load:" + organic_results[index].to_s).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+prefix.to_s+index.to_s+'.pdf')
+        PDFKit.new("Page failed to load:" + organic_results[index].to_s).to_file(filepath(search_term)+self.clean_trademark(search_term)+prefix.to_s+index.to_s+'.pdf')
       end
     end
   end
@@ -212,7 +216,7 @@ class GlobalCrawler
       puts "Converting #{cites[index]} to PDF"
       begin
         if self.fetch_page(cites[index])
-          PDFKit.new(cites[index]).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+prefix.to_s+index.to_s+'.pdf')
+          PDFKit.new(cites[index]).to_file(filepath(search_term)+self.clean_trademark(search_term)+prefix.to_s+index.to_s+'.pdf')
         end
       rescue Exception => e0
         puts "Caught an exception trying to generate PDF for " + cites[index].to_s
@@ -220,12 +224,12 @@ class GlobalCrawler
         begin
           puts "Trying the cite link: " + adurls[index].to_s
           if self.fetch_page(adurls[index])
-            PDFKit.new(adurls[index]).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+prefix.to_s+index.to_s+'.pdf')
+            PDFKit.new(adurls[index]).to_file(filepath(search_term)+self.clean_trademark(search_term)+prefix.to_s+index.to_s+'.pdf')
           end
         rescue Exception => e1
           puts "Could not generate PDF for: " + adurls[index].to_s
           puts "Error message " + e1.to_s
-          PDFKit.new("Page failed to load:" + cites[index]).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+prefix.to_s+index.to_s+'.pdf')
+          PDFKit.new("Page failed to load:" + cites[index]).to_file(filepath(search_term)+self.clean_trademark(search_term)+prefix.to_s+index.to_s+'.pdf')
         end
       end
     end
@@ -242,7 +246,8 @@ class GlobalCrawler
     Capybara.click 'Google Search'
     
     google_page = Capybara.page.body.to_s
-    puts "retrieved the page"
+    PDFKit.new(google_page).to_file(filepath(search_term)+self.clean_trademark(search_term)+'_google.pdf')
+
     
     puts google_page
     # PDFKit.new(google_page).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'_google.pdf')
@@ -292,8 +297,8 @@ class GlobalCrawler
     # added static bing styling to fix error
     bing_pdf = PDFKit.new(bing_page)
     bing_pdf.stylesheets << "bing_styling.css"
-    puts bing_pdf.stylesheets # add custom styling so yahoo doesn't add the line through all the text
-    bing_pdf.to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'_bing.pdf')
+    puts bing_pdf.stylesheets # add custom styling
+    bing_pdf.to_file(filepath(search_term)+self.clean_trademark(search_term)+'_bing.pdf')
   
     
     b = BingCrawler.new(bing_page)
@@ -320,7 +325,7 @@ class GlobalCrawler
     yahoo_pdf = PDFKit.new(yahoo_page)
     yahoo_pdf.stylesheets << "yahoo_styling.css"
     puts yahoo_pdf.stylesheets # add custom styling so yahoo doesn't add the line through all the text
-    yahoo_pdf.to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'_yahoo.pdf')
+    yahoo_pdf.to_file(filepath(search_term)+self.clean_trademark(search_term)+'_yahoo.pdf')
   
     y = YahooCrawler.new(yahoo_page)
 

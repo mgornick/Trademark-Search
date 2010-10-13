@@ -1,13 +1,13 @@
-<h1>Listing search_results</h1>
+<h2>Search Results</h2>
 
 <table>
   <tr>
-    <th>Url</th>
+    <th>URL</th>
     <th>Search engine</th>
   </tr>
 
 <% @search_results.each do |search_result| %>
-  <tr>
+  <tr class="<%= cycle("even", "odd") %>">
     <td><%=h search_result.url %></td>
     <td><%=h search_result.search_engine %></td>
     <td><%= link_to 'Show', search_result %></td>

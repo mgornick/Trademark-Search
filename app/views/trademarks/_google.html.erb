@@ -1,0 +1,36 @@
+<div id='google'>
+  <h3>Google</h3>
+  <%= link_to "Google Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :search_page => 'google', :filename => "#{@trademark.term}_google.pdf" %><br />
+  
+  <p><strong>Organic Links</strong></p>
+  <ol>
+  <% index = 0 %>
+  <% @trademark.search_results.each do |result| %>
+    <% if result.search_engine == "Google" %>
+      <li>
+        <%= link_to "#{@trademark.term}_google_OL#{index}.pdf", :controller => :search_results, :action => :show, :id => result, :filename => "#{@trademark.term}_google_OL#{index}.pdf" %><br />
+        <small> <%= result.url %></small>
+      </li>
+      <% index = index + 1 %>
+    <% end %>  
+    
+  <% end %>
+  </ol>
+  
+  <p><strong>Sponsored Links</strong></p>
+  <ol>
+  <% index = 0 %>
+  <% @trademark.search_ads.each do |ad| %>
+    <% if ad.search_engine == "Google" %>
+      <li>
+        <small> <%= ad.location %></small>
+        <%= link_to "#{@trademark.term}_google_OL#{index}.pdf", :controller => :search_ads, :action => :show, :id => ad, :filename => "#{@trademark.term}_google_OL#{index}.pdf" %><br />
+        <small> <%= ad.url %></small>
+        
+      </li>
+      <% index = index + 1 %>
+    <% end %>  
+    
+  <% end %>
+  </ol>
+</div>
