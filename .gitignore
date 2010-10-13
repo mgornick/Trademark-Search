@@ -9,6 +9,7 @@ log/*
 tmp/*
 test/*
 *.sql
+*.sqlite3
 _site/
 vendor/bundler_gems/*
 !vendor/bundler_gems/cache/
