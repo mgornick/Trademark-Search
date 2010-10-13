@@ -1,5 +1,6 @@
-rails -v 2.3.5
+rails -v 2.3.8
 pdfkit
 capybara
+fletcherm-culerity
 nokogiri
-will_paginate -v 2.3.11
+will_paginate -v 2.3.15
