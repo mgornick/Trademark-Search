@@ -1,5 +1,7 @@
 require 'capybara'
 require 'capybara/dsl'
+require 'capybara/envjs'
+
 
 class Trademark < ActiveRecord::Base
   has_many :search_results
@@ -20,12 +22,56 @@ class Trademark < ActiveRecord::Base
     true
   end
   
-  def self.gather_all_links
+  def retrieve_google_search_page #testing of culerity
+    puts "\t searching google..."
+    Capybara.visit('http://www.google.com')
+    Capybara.fill_in "q", :with => self.term
+    Capybara.click 'Google Search'
+    self.google_search_page = Capybara.page.body.to_s
+  end
+  
+  def retrieve_yahoo_search_page #testing of culerity
+    puts "\t searching yahoo..."
+    Capybara.visit('http://search.yahoo.com')
+    Capybara.fill_in 'Search query', :with => self.term
+    Capybara.click 'Search'
+    self.yahoo_search_page = Capybara.page.body.to_s
+  end
+  
+  def retrieve_bing_search_page #testing of culerity
+    puts "\t searching bing..."
+    Capybara.visit('http://www.bing.com')
+    Capybara.fill_in "sb_form_q", :with => self.term
+    Capybara.click 'sb_form_go'
+    self.bing_search_page = Capybara.page.body.to_s
+  end
+  
+  def self.scrape
+    Capybara.run_server = false
+    Capybara.current_driver = :culerity
+    
     Trademark.all.each do |t|
       puts "Working on " + t.term
-      t.search_internet
+      t.perform_searches
     end
-    nil
+    return true
+  end
+  
+  def perform_searches
+    return true if self.complete
+    
+    #delete old search and ad results if crash
+    self.search_results.delete_all
+    self.search_ads.delete_all
+    
+    self.retrieve_google_search_page
+    self.retrieve_yahoo_search_page
+    self.retrieve_bing_search_page
+    
+    self.complete = true
+    self.save
+    
+    puts "completed " + self.term
   end
   
   def search_internet

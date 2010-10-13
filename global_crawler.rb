@@ -22,10 +22,10 @@ class GlobalCrawler
         if !File.directory?('trademarks/' + trademark.scan(/[a-zA-Z0-9]/).to_s)
           FileUtils.mkdir('trademarks/' + trademark.scan(/[a-zA-Z0-9]/).to_s) #makes folder for that trademark
         end
-        self.output.write(trademark.to_s + " \t ")
-        self.search_bing(trademark)
+        # self.output.write(trademark.to_s + " \t ")
+        # self.search_bing(trademark)
         self.search_google(trademark)
-        self.search_yahoo(trademark)
+        # self.search_yahoo(trademark)
       end
       
     rescue Exception => e
@@ -233,8 +233,8 @@ class GlobalCrawler
   
   # search google
   def search_google(search_term)
-    # turn off rack server since we're running against a remote app
-    Capybara.run_server = false    
+    
+    Capybara.run_server = false # turn off rack server since we're running against a remote app
     Capybara.current_driver = :culerity
     Capybara.app_host = 'http://www.google.com'
     Capybara.visit('/')
@@ -242,16 +242,19 @@ class GlobalCrawler
     Capybara.click 'Google Search'
     
     google_page = Capybara.page.body.to_s
-    PDFKit.new(google_page).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'_google.pdf')
+    puts "retrieved the page"
     
-    g = GoogleCrawler.new(google_page)
-    g.organic_results(10)
-    g.sponsored_results(15)
+    puts google_page
+    # PDFKit.new(google_page).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'_google.pdf')
+    # 
+    # g = GoogleCrawler.new(google_page)
+    # g.organic_results(10)
+    # g.sponsored_results(15)
     
-    self.write_seach_results(g)
+    # self.write_seach_results(g)
         
-    self.export_links_to_files(search_term, g.organic, '_google_OL')
-    self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
+    # self.export_links_to_files(search_term, g.organic, '_google_OL')
+    # self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
   end
   
   def write_seach_results(search_engine)
