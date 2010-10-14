@@ -15,6 +15,7 @@ class Trademark < ActiveRecord::Base
     trademarks = IO.read('trademarks.txt').split("\n")
     trademarks.each do |trademark|
       if Trademark.find(:first, :conditions => {:term => trademark}).nil?
+        
         puts "Adding the trademark " + trademark + " to the database."
         Trademark.create(:term => trademark)
       end
@@ -23,37 +24,58 @@ class Trademark < ActiveRecord::Base
   end
   
   def retrieve_google_search_page #testing of culerity
+    # puts "\t searching google..."
+    # Capybara.visit('http://www.google.com/webhp?complete=0&hl=en')
+    # puts "\t visited page..."
+    # Capybara.fill_in "q", :with => self.term
+    # puts "\t entered search term..."
+    # Capybara.click 'Google Search'
+    # puts "\t clicked search..."
+    # sleep(4)
     puts "\t searching google..."
-    Capybara.visit('http://www.google.com')
-    Capybara.fill_in "q", :with => self.term
-    Capybara.click 'Google Search'
+    Capybara.visit("http://www.google.com/search?q=" + self.term)
     self.google_search_page = Capybara.page.body.to_s
+    puts "\t saving html page..."
   end
   
   def retrieve_yahoo_search_page #testing of culerity
-    puts "\t searching yahoo..."
-    Capybara.visit('http://search.yahoo.com')
-    Capybara.fill_in 'Search query', :with => self.term
-    Capybara.click 'Search'
+    # Capybara.visit('http://search.yahoo.com')
+    # puts "\t visited page..."
+    # Capybara.fill_in 'Search query', :with => self.term
+    # puts "\t entered search term..."
+    # Capybara.click 'Search'
+    # puts "\t clicked search..."
+    # sleep(4)
+    
+    puts "\t searching yahoo..."    
+    Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
     self.yahoo_search_page = Capybara.page.body.to_s
+    puts "\t saving html page..."
   end
   
   def retrieve_bing_search_page #testing of culerity
     puts "\t searching bing..."
-    Capybara.visit('http://www.bing.com')
-    Capybara.fill_in "sb_form_q", :with => self.term
-    Capybara.click 'sb_form_go'
+    Capybara.visit("http://www.bing.com/search?q=" + self.term)
     self.bing_search_page = Capybara.page.body.to_s
   end
   
   def self.scrape
     Capybara.run_server = false
-    Capybara.current_driver = :culerity
+    # Capybara.current_driver = :culerity
+    Capybara.current_driver = :selenium 
+    
     
     Trademark.all.each do |t|
+      start_time = Time.now
       puts "Working on " + t.term
       t.perform_searches
+      end_time = Time.now
+      
+      single_trademark_time = end_time - start_time      
+      incomplete = Trademark.count(:conditions => {:complete => nil})
+      puts "Estimated time remaining to complete search: " + (single_trademark_time * incomplete/3600).to_s + " hours" 
     end
+    
     return true
   end
   

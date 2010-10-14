@@ -7,12 +7,14 @@
 <table>
   <tr>
     <th>Term</th>
+    <th>Actions</th>
     <th>Complete</th>
   </tr>
 
 <% @trademarks.each do |trademark| %>
   <tr class="<%= cycle("even", "odd") %>">
     <td><%= link_to trademark.term, trademark %></td>
+    <td><%= link_to "Edit", edit_trademark_path(trademark) %></td>
     <td style="text-transform:uppercase; font-size:12px;">
 	  <% if trademark.complete %>
  	    <%= image_tag 'accept.png' %>

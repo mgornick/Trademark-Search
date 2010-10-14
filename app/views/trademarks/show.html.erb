@@ -1,3 +1,8 @@
+<% if params[:webpage] %>
+  <%= @trademark.bing_search_page %>
+
+<% else %>
+
 <h2><%=h @trademark.term %></h2>
 
 <p><%= link_to 'Edit Trademark', edit_trademark_path(@trademark) %></p><br />
@@ -7,3 +12,4 @@
 <%= render :partial => 'yahoo' %>
 <%= render :partial => 'bing' %>
 
+<% end %>
