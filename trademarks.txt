@@ -531,7 +531,7 @@ Cross
 Cross Townsend
 Crown Royal
 Crowne Plaza
-Crunch Ôn Munch
+Crunch 'n Munch
 Cruvinet
 Cryovac
 Crystal Clean
@@ -610,7 +610,6 @@ Diners Club
 Dinty Moore
 Dior
 Dippity-do
-
 Discman
 Discover
 Discovery
@@ -1138,7 +1137,7 @@ Kelox
 Kelty
 Kenmore
 Kentucky Fried Chicken
-Kibbles Ôn Bits
+Kibbles 'n Bits
 Kid Stuff
 Kids Foot Locker
 Kids Mart
@@ -1232,7 +1231,7 @@ Lifecycle
 Light & Lean
 Light n' Lively
 Lincoln Logs
-Linens Ôn Things
+Linens 'n Things
 Linux
 Lipton
 Liquid
@@ -1910,7 +1909,7 @@ Serengeti
 ServiceMaster
 Servin' Saver
 Sesame Street
-Shake Ôn Bake
+Shake 'n Bake
 Shakespeare
 Shamu
 Sharpie
@@ -2017,7 +2016,7 @@ Sports Illustrated
 Sportshape
 Sportster
 Spra-Coupe
-Spray Ôn Wash
+Spray 'n Wash
 Sprint
 Sprite
 Squirt

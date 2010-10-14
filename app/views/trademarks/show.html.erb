@@ -1,5 +1,7 @@
 <% if params[:webpage] %>
-  <%= @trademark.bing_search_page %>
+  <%= @trademark.google_search_page if params[:webpage] == 'google'%>
+  <%= @trademark.yahoo_search_page if params[:webpage] == 'yahoo'%>
+  <%= @trademark.bing_search_page if params[:webpage] == 'bing'%>
 
 <% else %>
 
