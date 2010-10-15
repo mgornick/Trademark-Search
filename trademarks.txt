@@ -1769,7 +1769,6 @@ Rayovac
 RC
 RCA
 Re-Nutriv
-
 Reader's Digest
 Real Estate Superstars
 RealAudio
@@ -2229,7 +2228,7 @@ Tournament
 Toy Story
 Toyota
 Toys That Last
-Toys ÒRÓ Us
+Toys "R" Us
 Trading Spaces
 Traffic and Weather Together
 Trailways
