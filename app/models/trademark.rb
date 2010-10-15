@@ -113,9 +113,11 @@ class Trademark < ActiveRecord::Base
       yahoo = YahooCrawler.new(self.yahoo_search_page)
       bing = BingCrawler.new(self.bing_search_page)
 
-      google.organic_results(10)
-      yahoo.organic_results(10)
-      bing.organic_results(10)
+      total_organic_results = 15
+
+      google.organic_results(total_organic_results)
+      yahoo.organic_results(total_organic_results)
+      bing.organic_results(total_organic_results)
 
 
       google.organic.each do |organic|
@@ -140,6 +142,45 @@ class Trademark < ActiveRecord::Base
     return true
   end
   
+  def determine_sponsored_links
+    begin
+      self.search_results.find(:all).map {|i| i.destroy}
+      
+      google = GoogleCrawler.new(self.google_search_page)
+      yahoo = YahooCrawler.new(self.yahoo_search_page)
+      bing = BingCrawler.new(self.bing_search_page)
+      
+      total_sponsored_results = 15
+
+      google.sponsored_results(total_sponsored_results)
+      yahoo.sponsored_results(total_sponsored_results)
+      bing.sponsored_results(total_sponsored_results)
+
+
+      google.sponsored_cites.each_index do |i|
+        sponsored = google.sponsored_cites[i]
+        self.search_ads.create(:url => sponsored, :search_engine => "Google", :location => google.ad_positions[i].to_s)
+      end
+      
+      yahoo.sponsored_cites.each_index do |i|
+        sponsored = yahoo.sponsored_cites[i]
+        self.search_ads.create(:url => sponsored, :search_engine => "Yahoo", :location => yahoo.ad_positions[i].to_s)
+      end
+      
+      bing.sponsored_cites.each_index do |i|
+        sponsored = bing.sponsored_cites[i]
+        self.search_ads.create(:url => sponsored, :search_engine => "Bing", :location => bing.ad_positions[i].to_s)
+      end
+      
+    rescue Exception => e
+      puts "Error trying to determing search links for " + self.term
+      puts e.inspect
+    end
+    
+    puts "Found " + self.search_results.count.to_s + " sponsored search results for " + self.term
+
+    return true
+  end
 
 
 
