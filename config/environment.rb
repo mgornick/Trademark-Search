@@ -15,9 +15,10 @@ Rails::Initializer.run do |config|
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
 
   # Specify gems that this application depends on and have them installed with rake gems:install
-  config.gem "nokogiri"
-  config.gem 'capybara'
-  config.gem 'will_paginate'
+  config.gem "nokogiri",      :version => '1.4.3.1'
+  config.gem 'capybara',      :version => '0.3.9'
+  config.gem 'will_paginate', :version => '2.3.15'
+  config.gem 'fastercsv',     :version => '1.5.3'
   
   require 'google_crawler'
   require 'bing_crawler'

@@ -7,6 +7,21 @@ class TrademarksController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @trademarks }
+      format.csv  do 
+        csv_string = FasterCSV.generate do |csv|
+          #header row
+          csv << Trademark.csv_header
+          
+          Trademark.find(:all, :conditions => {:complete => true}).each do |t|
+            csv << t.csv_row
+          end
+          
+        end
+        
+        send_data csv_string,
+                  :type => 'text/csv; charset=iso-8859-1; header=present',
+                  :disposition => "attachment; filename=trademarks.csv"
+      end
     end
   end
 

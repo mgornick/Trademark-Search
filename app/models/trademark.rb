@@ -3,7 +3,9 @@ require 'capybara/dsl'
 require 'capybara/envjs'
 require 'fileutils'
 
-SLEEP_TIME = 3 # number of seconds to wait between each search
+SLEEP_TIME = 3              # number of seconds to wait between each search
+TOTAL_SPONSORED_LINKS = 15
+TOTAL_ORGANIC_LINKS = 10
 
 class Trademark < ActiveRecord::Base
   has_many :search_results
@@ -101,9 +103,6 @@ class Trademark < ActiveRecord::Base
     puts "Exporting " + trademark_name + " to pdf..."
   end
   
-  def export_to_csv(file)
-    
-  end
   
   def self.excel
     excel_file = File.new("trademark_results_"+Time.now.strftime("%m-%d-%Y_%I:%M%p")+".csv", "w")
@@ -140,7 +139,7 @@ class Trademark < ActiveRecord::Base
       yahoo = YahooCrawler.new(self.yahoo_search_page)
       bing = BingCrawler.new(self.bing_search_page)
 
-      total_organic_results = 15
+      total_organic_results = TOTAL_ORGANIC_LINKS
 
       google.organic_results(total_organic_results)
       yahoo.organic_results(total_organic_results)
@@ -181,7 +180,7 @@ class Trademark < ActiveRecord::Base
       yahoo = YahooCrawler.new(self.yahoo_search_page)
       bing = BingCrawler.new(self.bing_search_page)
       
-      total_sponsored_results = 15
+      total_sponsored_results = TOTAL_SPONSORED_LINKS
 
       google.sponsored_results(total_sponsored_results)
       yahoo.sponsored_results(total_sponsored_results)
@@ -213,5 +212,58 @@ class Trademark < ActiveRecord::Base
     puts "Found " + self.search_ads.count.to_s + " sponsored search results for " + self.term
 
     return true
+  end
+  
+  
+  # exporting to CSV
+  def self.csv_header
+    row = ["Trademark"]
+
+    ["Bing", "Google", "Yahoo"].each do |engine|
+      row << engine + " Total OL"
+      row << engine + " Total SL"
+      
+      TOTAL_ORGANIC_LINKS.times do |i|
+        row << engine + "_OL#{i}"
+      end
+      
+      TOTAL_SPONSORED_LINKS.times do |s|
+        row << engine + "_SL#{s} Position"
+        row << engine + "_SL#{s}"
+      end
+    end
+    row
+  end
+  
+  def csv_row
+    row = [self.term.to_s]
+    
+    ["Bing", "Google", "Yahoo"].each do |engine|
+      row << self.send("total_#{engine.downcase}_results").to_s
+      row << self.search_ads.count(:limit => TOTAL_SPONSORED_LINKS, :conditions => {:search_engine => engine}).to_s
+      
+      organic_results = self.search_results.find(:all, :limit =>TOTAL_ORGANIC_LINKS, :conditions => {:search_engine => engine})
+      organic_results.each do |o|
+        row << o.url.to_s
+      end
+      
+      if organic_results.size < TOTAL_ORGANIC_LINKS # need to pad the CSV rows if not exactly the max # of organic results
+        (TOTAL_ORGANIC_LINKS - organic_results.size).times {row << ""}
+      end
+      
+      ad_results = self.search_ads.find(:all, :limit =>TOTAL_SPONSORED_LINKS, :conditions => {:search_engine => engine})
+      ad_results.each do |s|
+        row << s.location
+        row << s.url
+      end
+      
+      if ad_results.size < TOTAL_SPONSORED_LINKS # need to pad the CSV rows if not exactly the max # of sponsored results
+        ((TOTAL_SPONSORED_LINKS - ad_results.size)*2).times {row << ""} # needs to happen twice because of location + url of ads
+      end
+      
+    end
+    row
+    
+    
   end
 end
