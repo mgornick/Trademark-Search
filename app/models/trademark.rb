@@ -80,7 +80,7 @@ class Trademark < ActiveRecord::Base
   end
   
   def self.pdfs
-    Trademark.all.each do |t|
+    Trademark.find(:all, :conditions => {:complete => true}).each do |t|
       puts "Generating PDF for " + t.term
       t.export_to_pdf
     end
