@@ -1,5 +1,6 @@
 <div id='bing'>
   <h3>Bing</h3>
+  <p><%= @trademark.total_bing_results %> results</p>
   <%= link_to "Bing Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :webpage => 'bing' %><br />
   
   <p><strong>Organic Links</strong></p>

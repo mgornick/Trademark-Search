@@ -1,5 +1,6 @@
 <div id='yahoo'>
   <h3>Yahoo</h3>
+  <p><%= @trademark.total_yahoo_results %> results</p>
   <%= link_to "Yahoo Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :webpage => 'yahoo' %><br />
   
   <p><strong>Organic Links</strong></p>

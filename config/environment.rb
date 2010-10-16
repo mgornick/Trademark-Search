@@ -17,7 +17,6 @@ Rails::Initializer.run do |config|
   # Specify gems that this application depends on and have them installed with rake gems:install
   config.gem "nokogiri"
   config.gem 'capybara'
-  config.gem 'culerity'
   config.gem 'will_paginate'
   
   require 'google_crawler'

@@ -162,7 +162,7 @@ class Trademark < ActiveRecord::Base
       end
       self.total_bing_results = bing.total_organic_results
       
-      
+      self.save
     rescue Exception => e
       puts "Error trying to determing search links for " + self.term
       puts e.inspect

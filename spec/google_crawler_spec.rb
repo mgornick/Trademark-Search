@@ -86,8 +86,11 @@ describe "GoogleCrawler" do
     
     it "should grab the sponsored links and the positions" do
       @google_crawler.sponsored_results(9).size.should == 9
-      puts "\n" + @google_crawler.sponsored_cites.inspect
       @google_crawler.ad_positions.should == ["Top", "Right", "Right", "Right", "Right", "Right", "Right", "Right", "Right"]
+    end
+    
+    it "should know the total number of results" do
+      @google_crawler.total_organic_results.should == 1890000000.to_s
     end
   
   end
