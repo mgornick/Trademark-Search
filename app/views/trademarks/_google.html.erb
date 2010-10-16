@@ -1,5 +1,6 @@
 <div id='google'>
   <h3>Google</h3>
+  <p><%= @trademark.total_google_results %> results</p>
   <%= link_to "Google Search Page", :controller => :trademarks, :action => :show, :id => @trademark, :webpage => 'google'%><br />
   
   <p><strong>Organic Links</strong></p>

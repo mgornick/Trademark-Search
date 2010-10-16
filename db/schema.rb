@@ -34,6 +34,9 @@ ActiveRecord::Schema.define(:version => 20100814035717) do
     t.text     "bing_search_page"
     t.text     "google_search_page"
     t.text     "yahoo_search_page"
+    t.integer  "total_google_results"
+    t.integer  "total_yahoo_results"
+    t.integer  "total_bing_results"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

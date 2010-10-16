@@ -234,33 +234,7 @@ class GlobalCrawler
       end
     end
   end
-  
-  # search google
-  def search_google(search_term)
-    
-    Capybara.run_server = false # turn off rack server since we're running against a remote app
-    Capybara.current_driver = :culerity
-    Capybara.app_host = 'http://www.google.com'
-    Capybara.visit('/')
-    Capybara.fill_in "q", :with => search_term.to_s
-    Capybara.click 'Google Search'
-    
-    google_page = Capybara.page.body.to_s
-    PDFKit.new(google_page).to_file(filepath(search_term)+self.clean_trademark(search_term)+'_google.pdf')
 
-    
-    puts google_page
-    # PDFKit.new(google_page).to_file('trademarks/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'/'+search_term.scan(/[a-zA-Z0-9]/).to_s+'_google.pdf')
-    # 
-    # g = GoogleCrawler.new(google_page)
-    # g.organic_results(10)
-    # g.sponsored_results(15)
-    
-    # self.write_seach_results(g)
-        
-    # self.export_links_to_files(search_term, g.organic, '_google_OL')
-    # self.export_sponsored_links_to_files(search_term, g.sponsored_cites, '_google_SL', g.sponsored_adurls)    
-  end
   
   def write_seach_results(search_engine)
     self.output.write(search_engine.total_organic_results.to_s + " \t")
