@@ -22,7 +22,7 @@ class GoogleCrawler
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
     
     # results = doc.css("div[@id='ires']/ol/li[@class='g']/h3[@class='r']/a[@class='l']")
-    results = doc.css("div[@id='ires']/ol/li/h3[@class='r']/a")
+    results = doc.css("div[@id='ires']/ol/li/h3[@class='r']/a[@class='l']")
     results.each do |link|
       self.organic << link[:href]
     end
