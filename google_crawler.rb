@@ -44,7 +44,7 @@ class GoogleCrawler
     # grabbing the cite tag
     # top
     
-    top_results = doc.css("div[@id='tads']/ol[@onmouseover='return true']/li")
+    top_results = doc.css("div[@id='tads']/ol[@onmouseover='return true']/li[@class='tas']")
     top_results.each do |link|
       cite_link = link.css('cite').text.gsub(' ', '').gsub("\n", '')
       if cite_link.scan('http').first

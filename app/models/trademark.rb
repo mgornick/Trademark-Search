@@ -3,6 +3,7 @@ require 'capybara/dsl'
 require 'capybara/envjs'
 require 'fileutils'
 
+SLEEP_TIME = 3 # number of seconds to wait between each search
 
 class Trademark < ActiveRecord::Base
   has_many :search_results
@@ -27,6 +28,7 @@ class Trademark < ActiveRecord::Base
   def retrieve_google_search_page #testing of culerity
     puts "\t searching google..."
     Capybara.visit("http://www.google.com/search?q=" + self.term)
+    sleep(SLEEP_TIME)
     self.google_search_page = Capybara.page.body.to_s
     puts "\t saving html page..."
   end
@@ -34,6 +36,7 @@ class Trademark < ActiveRecord::Base
   def retrieve_yahoo_search_page #testing of culerity
     puts "\t searching yahoo..."    
     Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
+    sleep(SLEEP_TIME)
     self.yahoo_search_page = Capybara.page.body.to_s
     puts "\t saving html page..."
   end
@@ -41,6 +44,7 @@ class Trademark < ActiveRecord::Base
   def retrieve_bing_search_page #testing of culerity
     puts "\t searching bing..."
     Capybara.visit("http://www.bing.com/search?q=" + self.term)
+    sleep(SLEEP_TIME)
     self.bing_search_page = Capybara.page.body.to_s
   end
   
@@ -144,7 +148,7 @@ class Trademark < ActiveRecord::Base
   
   def determine_sponsored_links
     begin
-      self.search_results.find(:all).map {|i| i.destroy}
+      self.search_ads.find(:all).map {|i| i.destroy}
       
       google = GoogleCrawler.new(self.google_search_page)
       yahoo = YahooCrawler.new(self.yahoo_search_page)
@@ -155,6 +159,8 @@ class Trademark < ActiveRecord::Base
       google.sponsored_results(total_sponsored_results)
       yahoo.sponsored_results(total_sponsored_results)
       bing.sponsored_results(total_sponsored_results)
+      
+      puts google.sponsored_cites
 
 
       google.sponsored_cites.each_index do |i|
@@ -177,7 +183,7 @@ class Trademark < ActiveRecord::Base
       puts e.inspect
     end
     
-    puts "Found " + self.search_results.count.to_s + " sponsored search results for " + self.term
+    puts "Found " + self.search_ads.count.to_s + " sponsored search results for " + self.term
 
     return true
   end

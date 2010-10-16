@@ -73,4 +73,23 @@ describe "GoogleCrawler" do
     end
   end
   
+  context "testing latest version of Google Instant Search page" do
+    before(:each) do
+      @page = File.read("spec/assets/google_v2.html")
+      @google_crawler = GoogleCrawler.new(@page)
+    end
+    
+    it "should grab the organic search results from a Google search page" do
+      @google_crawler.organic_results(10).size.should == 10
+      @google_crawler.organic.should == ["http://www.honda.com/", "http://automobiles.honda.com/", "http://powersports.honda.com/", "http://world.honda.com/", "http://www.hondacitychicago.com/", "http://www.carrshonda.com/", "http://www.fjchicago.com/", "http://mcgrathcityhonda.com/", "http://www.hondapowerequipment.com/", "http://en.wikipedia.org/wiki/Honda"]
+    end
+    
+    it "should grab the sponsored links and the positions" do
+      @google_crawler.sponsored_results(9).size.should == 9
+      puts "\n" + @google_crawler.sponsored_cites.inspect
+      @google_crawler.ad_positions.should == ["Top", "Right", "Right", "Right", "Right", "Right", "Right", "Right", "Right"]
+    end
+  
+  end
+  
 end
