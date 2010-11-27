@@ -29,7 +29,12 @@ class TrademarksController < ApplicationController
   # GET /trademarks/1.xml
   def show
     @trademark = Trademark.find(params[:id], :include => [:search_ads, :search_results])
-    render :layout => false if params[:webpage]
+    
+    if params[:filename] and params[:filename] != ""
+      send_data PDFKit.new("http://www.google.com").to_pdf
+    else
+      render :layout => false if params[:webpage]
+    end
   end
   
   # def show

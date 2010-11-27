@@ -1,6 +1,5 @@
 require 'capybara'
 require 'capybara/dsl'
-require 'capybara/envjs'
 require 'fileutils'
 
 SLEEP_TIME = 3              # number of seconds to wait between each search
@@ -29,15 +28,21 @@ class Trademark < ActiveRecord::Base
   
   def retrieve_google_search_page #testing of culerity
     puts "\t searching google..."
-    Capybara.visit("http://www.google.com/search?q=" + self.term)
+    Capybara.visit("http://www.google.com")
+    Capybara.fill_in "q", :with => self.term
+    sleep(SLEEP_TIME)
+    # Capybara.visit("http://www.google.com/search?q=" + self.term)
     sleep(SLEEP_TIME)
     self.google_search_page = Capybara.page.body.to_s
     puts "\t saving html page..."
   end
   
   def retrieve_yahoo_search_page #testing of culerity
-    puts "\t searching yahoo..."    
-    Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
+    puts "\t searching yahoo..."   
+    Capybara.visit("http://www.yahoo.com")
+    Capybara.fill_in "p", :with => self.term 
+    Capybara.click_button "Web Search"
+    # Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
     sleep(SLEEP_TIME)
     self.yahoo_search_page = Capybara.page.body.to_s
     puts "\t saving html page..."
@@ -45,7 +50,10 @@ class Trademark < ActiveRecord::Base
   
   def retrieve_bing_search_page #testing of culerity
     puts "\t searching bing..."
-    Capybara.visit("http://www.bing.com/search?q=" + self.term)
+    Capybara.visit("http://www.bing.com")
+    Capybara.fill_in "q", :with => self.term 
+    Capybara.click_button "sb_form_go"
+    # Capybara.visit("http://www.bing.com/search?q=" + self.term)
     sleep(SLEEP_TIME)
     self.bing_search_page = Capybara.page.body.to_s
   end
