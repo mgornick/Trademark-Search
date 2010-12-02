@@ -104,11 +104,27 @@ class Trademark < ActiveRecord::Base
     yahoo_page  = PDFKit.new(self.yahoo_search_page)
     bing_page   = PDFKit.new(self.bing_search_page)
     
-    google_page.to_file( filepath + "/#{trademark_name}_google.pdf")
-    yahoo_page.to_file(  filepath + "/#{trademark_name}_yahoo.pdf")
-    bing_page.to_file(   filepath + "/#{trademark_name}_bing.pdf")
-    
     puts "Exporting " + trademark_name + " to pdf..."
+    puts "\t Exporting Google Search Page"
+    google_page.to_file( filepath + "/#{trademark_name}_google.pdf")
+    puts "\t Exporting Organic Search Results for Google"
+    self.search_results(:conditions => {:search_engine => "Google"}).each_with_index do |search_result, index| 
+      page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_google_OL#{index}.pdf")
+    end
+    puts "\t Exporting Yahoo Search Page"
+    yahoo_page.to_file(  filepath + "/#{trademark_name}_yahoo.pdf")
+    puts "\t Exporting Organic Search Results for Yahoo"
+    self.search_results(:conditions => {:search_engine => "Yahoo"}).each_with_index do |search_result, index| 
+      page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_yahoo_OL#{index}.pdf")
+    end
+    puts "\t Exporting Bing Search Page"
+    bing_page.to_file(   filepath + "/#{trademark_name}_bing.pdf")
+    puts "\t Exporting Organic Search Results for Bing"
+    self.search_results(:conditions => {:search_engine => "Bing"}).each_with_index do |search_result, index| 
+      page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_bing_OL#{index}.pdf")
+    end
+    
+    true
   end
   
   
