@@ -5,6 +5,9 @@ require 'fileutils'
 SLEEP_TIME = 3              # number of seconds to wait between each search
 TOTAL_SPONSORED_LINKS = 15
 TOTAL_ORGANIC_LINKS = 10
+LIMIT_PDF_ORGANIC_LINKS = 5
+
+# Run Trademark.import, Trademark.scrape, Trademark.links, Trademark.pdfs
 
 class Trademark < ActiveRecord::Base
   has_many :search_results
@@ -28,9 +31,14 @@ class Trademark < ActiveRecord::Base
   
   def retrieve_google_search_page #testing of culerity
     puts "\t searching google..."
-    Capybara.visit("http://www.google.com")
+    Capybara.visit("https://www.google.com")
     Capybara.fill_in "q", :with => self.term
+    Capybara.click_button "Google Search"
     sleep(SLEEP_TIME)
+    if Capybara.page.has_content?("Instant is on")
+      # Capybara.click
+      puts "instant search is on"
+    end
     # Capybara.visit("http://www.google.com/search?q=" + self.term)
     sleep(SLEEP_TIME)
     self.google_search_page = Capybara.page.body.to_s
@@ -95,6 +103,7 @@ class Trademark < ActiveRecord::Base
   end
   
   def export_to_pdf
+    puts "Exporting a maximum of " + LIMIT_PDF_ORGANIC_LINKS.to_s + " organic links."
     trademark_name = self.term.downcase.scan(/\w+/).to_s
     filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
     
@@ -108,19 +117,21 @@ class Trademark < ActiveRecord::Base
     puts "\t Exporting Google Search Page"
     google_page.to_file( filepath + "/#{trademark_name}_google.pdf")
     puts "\t Exporting Organic Search Results for Google"
-    self.search_results(:conditions => {:search_engine => "Google"}).each_with_index do |search_result, index| 
+    self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |search_result, index| 
       page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_google_OL#{index}.pdf")
     end
+    
     puts "\t Exporting Yahoo Search Page"
     yahoo_page.to_file(  filepath + "/#{trademark_name}_yahoo.pdf")
     puts "\t Exporting Organic Search Results for Yahoo"
-    self.search_results(:conditions => {:search_engine => "Yahoo"}).each_with_index do |search_result, index| 
+    self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS,:conditions => {:search_engine => "Yahoo"}).each_with_index do |search_result, index| 
       page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_yahoo_OL#{index}.pdf")
     end
+    
     puts "\t Exporting Bing Search Page"
     bing_page.to_file(   filepath + "/#{trademark_name}_bing.pdf")
     puts "\t Exporting Organic Search Results for Bing"
-    self.search_results(:conditions => {:search_engine => "Bing"}).each_with_index do |search_result, index| 
+    self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Bing"}).each_with_index do |search_result, index| 
       page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_bing_OL#{index}.pdf")
     end
     
