@@ -38,7 +38,7 @@ class Trademark < ActiveRecord::Base
     sleep(SLEEP_TIME)
     if Capybara.page.has_content?("Instant is on")
       # Capybara.click
-      puts "instant search is on"
+      puts "Instant search is on. This is likely to cause an error while parsing Google."
     end
     # Capybara.visit("http://www.google.com/search?q=" + self.term)
     sleep(SLEEP_TIME)
