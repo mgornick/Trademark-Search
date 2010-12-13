@@ -98,15 +98,25 @@ class Trademark < ActiveRecord::Base
   
   def self.pdfs
     Trademark.find(:all, :conditions => {:complete => true}).each do |t|
-      puts "Generating PDF for " + t.term
-      t.export_to_pdf
+      trademark_name = t.term.downcase.scan(/\w+/).to_s
+      filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
+      
+      if FileTest.directory?(filepath)
+        puts "Skipping " + trademark_name + " since folders already exist."
+      else
+        puts "Generating PDF for " + t.term
+        t.export_to_pdf
+      end
     end
+    true
   end
   
   def export_to_pdf 
     puts "Exporting a maximum of " + LIMIT_PDF_ORGANIC_LINKS.to_s + " organic links."
     trademark_name = self.term.downcase.scan(/\w+/).to_s
     filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
+    
+    
     
     FileUtils.mkdir_p(filepath)
 
