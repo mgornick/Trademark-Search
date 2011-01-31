@@ -112,7 +112,8 @@ class Trademark < ActiveRecord::Base
   end
   
   def export_to_pdf 
-    puts "Exporting a maximum of " + LIMIT_PDF_ORGANIC_LINKS.to_s + " organic links."
+    #puts "Exporting a maximum of " + LIMIT_PDF_ORGANIC_LINKS.to_s + " organic links."
+    puts "Only exporting search pages for each trademark"
     trademark_name = self.term.downcase.scan(/\w+/).to_s
     filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
     
@@ -127,39 +128,39 @@ class Trademark < ActiveRecord::Base
     puts "Exporting " + trademark_name + " to pdf..."
     puts "\t Exporting Google Search Page"
     google_page.to_file( filepath + "/#{trademark_name}_google.pdf")
-    puts "\t Exporting Organic Search Results for Google"
-    self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |search_result, index| 
-      page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_google_OL#{index}.pdf")
-    end
+    #puts "\t Exporting Organic Search Results for Google"
+    #self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |search_result, index| 
+    #  page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_google_OL#{index}.pdf")
+    #end
     
-    puts "\t Exporting Sponsored Links for Google"
-    self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |ad, index|
-      page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_google_SL#{index}.pdf")
-    end
+    #puts "\t Exporting Sponsored Links for Google"
+    #self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |ad, index|
+      #page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_google_SL#{index}.pdf")
+    #end
     
     puts "\t Exporting Yahoo Search Page"
     yahoo_page.to_file(  filepath + "/#{trademark_name}_yahoo.pdf")
-    puts "\t Exporting Organic Search Results for Yahoo"
-    self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS,:conditions => {:search_engine => "Yahoo"}).each_with_index do |search_result, index| 
-      page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_yahoo_OL#{index}.pdf")
-    end
+    #puts "\t Exporting Organic Search Results for Yahoo"
+    #self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS,:conditions => {:search_engine => "Yahoo"}).each_with_index do |search_result, index| 
+      #page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_yahoo_OL#{index}.pdf")
+    #end
     
-    puts "\t Exporting Sponsored Links for Yahoo"
-    self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Yahoo"}).each_with_index do |ad, index|
-      page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_yahoo_SL#{index}.pdf")
-    end
+    #puts "\t Exporting Sponsored Links for Yahoo"
+    #self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Yahoo"}).each_with_index do |ad, index|
+      #page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_yahoo_SL#{index}.pdf")
+    #end
     
     puts "\t Exporting Bing Search Page"
     bing_page.to_file(   filepath + "/#{trademark_name}_bing.pdf")
-    puts "\t Exporting Organic Search Results for Bing"
-    self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Bing"}).each_with_index do |search_result, index| 
-      page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_bing_OL#{index}.pdf")
-    end
+    #puts "\t Exporting Organic Search Results for Bing"
+    #self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Bing"}).each_with_index do |search_result, index| 
+      #page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_bing_OL#{index}.pdf")
+    #end
     
-    puts "\t Exporting Sponsored Links for Google"
-    self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Bing"}).each_with_index do |ad, index|
-      page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_bing_SL#{index}.pdf")
-    end
+    #puts "\t Exporting Sponsored Links for Bing"
+    #self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Bing"}).each_with_index do |ad, index|
+    #  page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_bing_SL#{index}.pdf")
+    #end
     
     true
   end
