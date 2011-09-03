@@ -7,8 +7,10 @@ Professor David Hyman wants to do a search for a trademark on Google, Bing, and 
 Be sure to install wkhtmltopdf if you need to export PDF's of the webpages. Follow tutorial on [Github](https://github.com/jdpace/PDFKit/wiki/Installing-WKHTMLTOPDF)
 
 Setup/Install ruby gems by using:
-gem install bundler
-bundle install
+
+* gem install bundler
+
+* bundle install
 
 
 ##Instructions
