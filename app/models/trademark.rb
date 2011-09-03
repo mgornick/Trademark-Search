@@ -18,7 +18,7 @@ class Trademark < ActiveRecord::Base
     Trademark.delete_all
     SearchResult.delete_all
     SearchAd.delete_all
-    
+
     trademarks = IO.read('trademarks.txt').split("\n")
     trademarks.each do |trademark|
       if Trademark.find(:first, :conditions => {:term => trademark}).nil?
@@ -34,7 +34,7 @@ class Trademark < ActiveRecord::Base
     puts "\t searching google..."
     Capybara.visit("https://www.google.com")
     Capybara.fill_in "q", :with => self.term
-    Capybara.click_button "Google Search"
+    #Capybara.click_button "Google Search"
     sleep(SLEEP_TIME)
     if Capybara.page.has_content?("Instant is on")
       # Capybara.click
