@@ -50,7 +50,7 @@ class Trademark < ActiveRecord::Base
     puts "\t searching yahoo..."   
     Capybara.visit("http://www.yahoo.com")
     Capybara.fill_in "p", :with => self.term 
-    Capybara.click_button "Web Search"
+    Capybara.click_button "Search"
     # Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
     sleep(SLEEP_TIME)
     self.yahoo_search_page = Capybara.page.body.to_s
