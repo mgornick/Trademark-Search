@@ -7,7 +7,7 @@ gem "capybara", "1.1.0"
 gem "nokogiri", "1.5.0"
 gem "will_paginate", "2.3.15"
 gem "fastercsv"
-
+gem "test-unit","1.2.3"
 
 group :test do
   gem "rspec", "1.3.0"
