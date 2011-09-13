@@ -190,6 +190,11 @@ class Trademark < ActiveRecord::Base
     self.save
     
     puts "completed " + self.term
+  rescue
+    puts "Encountered Error on #{self.term}"
+    File.open("errors.txt", "w") do |f|
+      f.puts "FAILED ON #{self.term}"
+    end
   end
 
   
