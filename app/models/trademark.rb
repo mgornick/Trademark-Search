@@ -98,11 +98,11 @@ class Trademark < ActiveRecord::Base
   
   def self.pdfs
     Trademark.find(:all, :conditions => {:complete => true}).each do |t|
-      trademark_name = t.term.downcase.scan(/\w+/).to_s
-      filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
+      trademark_name = t.to_slug
+      filepath = "#{RAILS_ROOT}/TRADEMARKS/#{trademark_name}"
       
       if FileTest.directory?(filepath)
-        puts "Skipping " + trademark_name + " since folders already exist."
+        puts "Skipping #{trademark_name} since folders already exist."
       else
         puts "Generating PDF for " + t.term
         t.export_to_pdf
@@ -114,7 +114,7 @@ class Trademark < ActiveRecord::Base
   def export_to_pdf 
     #puts "Exporting a maximum of " + LIMIT_PDF_ORGANIC_LINKS.to_s + " organic links."
     puts "Only exporting search pages for each trademark"
-    trademark_name = self.term.downcase.scan(/\w+/).to_s
+    trademark_name = self.to_slug
     filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
     
     
@@ -333,4 +333,29 @@ class Trademark < ActiveRecord::Base
     
     
   end
+
+
+def to_slug
+    #strip the string
+    ret = self.term.strip
+
+    #blow away apostrophes
+    ret.gsub! /['`]/,""
+
+    # @ --> at, and & --> and
+    ret.gsub! /\s*@\s*/, " at "
+    ret.gsub! /\s*&\s*/, " and "
+
+    #replace all non alphanumeric, underscore or periods with underscore
+     ret.gsub! /\s*[^A-Za-z0-9\.\-]\s*/, '_'  
+
+     #convert double underscores to single
+     ret.gsub! /_+/,"_"
+
+     #strip off leading/trailing underscore
+     ret.gsub! /\A[_\.]+|[_\.]+\z/,""
+
+     ret
+  end
+  
 end
