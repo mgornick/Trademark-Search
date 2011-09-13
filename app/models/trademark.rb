@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/dsl'
 require 'fileutils'
+require 'csv'
 
 SLEEP_TIME = 3              # number of seconds to wait between each search
 TOTAL_SPONSORED_LINKS = 15
@@ -167,11 +168,16 @@ class Trademark < ActiveRecord::Base
   
   
   def self.excel
-    excel_file = File.new("trademark_results_"+Time.now.strftime("%m-%d-%Y_%I:%M%p")+".csv", "w")
-    
-    Trademark.all.each do |t|
-      puts "Exporting to Excel for " + t.term
-      t.export_to_csv(excel_file)
+    csv_string = CSV.generate do |csv|
+      #header row
+      csv << Trademark.csv_header
+      Trademark.find(:all, :conditions => {:complete => true}).each do |t|
+        csv << t.csv_row
+      end
+    end
+
+    File.open("excel.csv", "w") do |f|
+      f.puts csv_string
     end
   end
   
