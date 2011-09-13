@@ -176,7 +176,7 @@ class Trademark < ActiveRecord::Base
       end
     end
 
-    File.open("excel.csv", "w") do |f|
+    File.open("trademark_excel_export.csv", "w") do |f|
       f.puts csv_string
     end
   end
