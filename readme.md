@@ -22,6 +22,7 @@ Run the scraper:
 3. Search Google, Yahoo, and Bing for those search terms: Trademark.scrape
 4. Compute where the organic links and sponsored links are on each page: Trademark.links
 5. (optional) Export all search result pages to PDF in the "TRADEMARKS/" folder: Trademark.pdfs
+5. (optional) Export all search result pages to a CSV: Trademark.excel
 
 
 ##Code Overview
