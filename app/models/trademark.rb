@@ -24,7 +24,7 @@ class Trademark < ActiveRecord::Base
     trademarks.each do |trademark|
       if Trademark.find(:first, :conditions => {:term => trademark}).nil?
         
-        puts "Adding the trademark " + trademark + " to the database."
+        puts "Adding the trademark #{trademark} to the database."
         Trademark.create(:term => trademark)
       end
     end
@@ -50,7 +50,11 @@ class Trademark < ActiveRecord::Base
   def retrieve_yahoo_search_page #testing of culerity
     puts "\t searching yahoo..."   
     Capybara.visit("http://www.yahoo.com")
+
+    sleep(SLEEP_TIME)
     Capybara.fill_in "p", :with => self.term 
+
+    sleep(SLEEP_TIME)
     Capybara.click_button "Search"
     # Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
     sleep(SLEEP_TIME)
@@ -61,7 +65,11 @@ class Trademark < ActiveRecord::Base
   def retrieve_bing_search_page #testing of culerity
     puts "\t searching bing..."
     Capybara.visit("http://www.bing.com")
+
+    sleep(SLEEP_TIME)
     Capybara.fill_in "q", :with => self.term 
+
+    sleep(SLEEP_TIME)
     Capybara.click_button "sb_form_go"
     # Capybara.visit("http://www.bing.com/search?q=" + self.term)
     sleep(SLEEP_TIME)
@@ -196,11 +204,11 @@ class Trademark < ActiveRecord::Base
     self.save
     
     puts "completed " + self.term
-  rescue
-    puts "Encountered Error on #{self.term}"
-    File.open("errors.txt", "w") do |f|
-      f.puts "FAILED ON #{self.term}"
-    end
+  # rescue
+  #   puts "Encountered Error on #{self.term}"
+  #   File.open("errors.txt", "w") do |f|
+  #     f.puts "FAILED ON #{self.term}"
+  #   end
   end
 
   
