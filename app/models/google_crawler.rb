@@ -20,10 +20,14 @@ class GoogleCrawler
   def organic_results(number)
     self.organic = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
+    puts doc.inspect
     
     # results = doc.css("div[@id='ires']/ol/li[@class='g']/h3[@class='r']/a[@class='l']")
-    results = doc.css("div[@id='ires']/ol/li/h3[@class='r']/a[@class='l']")
+    results = doc.css("div#ires ol li h3.r a.l")
+    puts doc
     results.each do |link|
+      puts "%%%%%%%%%"
+      puts "found #{link[:href]}"
       self.organic << link[:href]
     end
     

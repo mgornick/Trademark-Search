@@ -12,7 +12,7 @@ class YahooCrawler
   end
   
   def total_organic_results
-    Nokogiri::HTML(self.page).css("strong[@id='resultCount']").children.first.to_s.gsub(",","").gsub("\n","").gsub(" ","")
+    Nokogiri::HTML(self.page).css("span[@id='resultCount']").children.first.to_s.gsub(",","").gsub("\n","").gsub(" ","")
   end
 
   def organic_results(number)

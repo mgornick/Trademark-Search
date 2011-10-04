@@ -226,7 +226,7 @@ class Trademark < ActiveRecord::Base
       yahoo.organic_results(total_organic_results)
       bing.organic_results(total_organic_results)
 
-
+      puts google.organic.inspect
       google.organic.each do |organic|
         self.search_results.create(:url => organic, :search_engine => "Google")
       end
