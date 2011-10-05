@@ -23,7 +23,7 @@ class Trademark < ActiveRecord::Base
     trademarks = IO.read('trademarks.txt').split("\n")
     trademarks.each do |trademark|
       if Trademark.find(:first, :conditions => {:term => trademark}).nil?
-        puts "Adding the trademark #{trademark} to the database."
+        puts "Adding #{trademark}"
         Trademark.create(:term => trademark)
       end
     end
@@ -76,6 +76,9 @@ class Trademark < ActiveRecord::Base
   def self.scrape
     Capybara.run_server = false
     Capybara.current_driver = :selenium
+
+    Capybara.visit("http://www.illinois.edu")
+    Capybara.save_page
 
     Trademark.all.each do |t|
       puts "Working on " + t.term
