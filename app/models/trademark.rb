@@ -87,8 +87,10 @@ class Trademark < ActiveRecord::Base
   end
 
   def self.links
+    "Parsing organic and sponsored links"
     Trademark.find(:all, :conditions => {:complete => true}).each do |t|
-      puts "Determining Organic and Sponsored links for " + t.term
+      puts ""
+      puts t.term
       t.determine_organic_links
       t.determine_sponsored_links
     end
@@ -109,21 +111,19 @@ class Trademark < ActiveRecord::Base
     end
     true
   end
-  
-  def export_to_pdf 
+
+  def export_to_pdf
     #puts "Exporting a maximum of " + LIMIT_PDF_ORGANIC_LINKS.to_s + " organic links."
     puts "Only exporting search pages for each trademark"
     trademark_name = self.to_slug
     filepath = "#{RAILS_ROOT}/TRADEMARKS/" + trademark_name
-    
-    
-    
+
     FileUtils.mkdir_p(filepath)
 
     google_page = PDFKit.new(self.google_search_page)
     yahoo_page  = PDFKit.new(self.yahoo_search_page)
     bing_page   = PDFKit.new(self.bing_search_page)
-    
+
     puts "Exporting " + trademark_name + " to pdf..."
     puts "\t Exporting Google Search Page"
     google_page.to_file( filepath + "/#{trademark_name}_google.pdf")
@@ -131,7 +131,7 @@ class Trademark < ActiveRecord::Base
     #self.search_results.find(:all, :limit => LIMIT_PDF_ORGANIC_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |search_result, index| 
     #  page = PDFKit.new(search_result.url).to_file(  filepath + "/#{trademark_name}_google_OL#{index}.pdf")
     #end
-    
+
     #puts "\t Exporting Sponsored Links for Google"
     #self.search_ads.find(:all, :limit => LIMIT_PDF_SPONSORED_LINKS, :conditions => {:search_engine => "Google"}).each_with_index do |ad, index|
       #page = PDFKit.new(ad.url).to_file(filepath + "/#{trademark_name}_google_SL#{index}.pdf")
@@ -235,7 +235,7 @@ class Trademark < ActiveRecord::Base
       puts e.inspect
     end
     
-    puts "Found " + self.search_results.count.to_s + " organic search results for " + self.term
+    puts "#{self.search_results.count} organic"
 
     return true
   end
@@ -274,8 +274,7 @@ class Trademark < ActiveRecord::Base
       puts e.inspect
     end
 
-    puts "Found " + self.search_ads.count.to_s + " sponsored search results for " + self.term
-
+    puts "#{self.search_ads.count} sponsored"
     return true
   end
   #

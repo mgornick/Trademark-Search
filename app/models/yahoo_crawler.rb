@@ -18,19 +18,19 @@ class YahooCrawler
   def organic_results(number)
     self.organic = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
-    
+
     results = doc.css("div[@id='web']/ol/li/div[@class='res']/div/h3/a")
     results.each do |link|
       self.organic << link[:href]
     end
-    
+
     self.organic = self.organic[0..number-1]
   end
-  
+
   def remove_html(text)
     clean = ""
     ignore = false
-    
+
     text.each_char do |char| # parses out all the code between <>
       if char == "<"
         ignore = true
@@ -51,7 +51,7 @@ class YahooCrawler
     
     # top
     # top_results = doc.css("div[@class='ads']/ul[@class='spns reducepx-spnslist']/li/em/b")
-    top_results = doc.css("div[@id='main']/div[@class='ads horiz']/ul[@class='spns reducepx-spnslist']/li/em")
+    top_results = doc.css("div#main div.ads.horiz ul.spns.reducepx-spnslist li em")
     # puts top_results.inspect
     top_results.each do |link|
       cite_link = self.remove_html(link.to_s)
