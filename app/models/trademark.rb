@@ -78,7 +78,9 @@ class Trademark < ActiveRecord::Base
     Capybara.current_driver = :selenium
 
     Capybara.visit("http://www.illinois.edu")
-    Capybara.save_page
+    home_page = Capybara.save_page
+
+    File.delete(home_page)
 
     Trademark.all.each do |t|
       puts "Working on " + t.term
