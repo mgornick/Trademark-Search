@@ -197,18 +197,13 @@ class Trademark < ActiveRecord::Base
     self.save
 
     puts "completed " + self.term
-  # rescue
-  #   puts "Encountered Error on #{self.term}"
-  #   File.open("errors.txt", "w") do |f|
-  #     f.puts "FAILED ON #{self.term}"
-  #   end
   end
 
-  
+
   def determine_organic_links
     begin
       self.search_results.find(:all).map {|i| i.destroy}
-      
+
       google = GoogleCrawler.new(self.google_search_page)
       yahoo = YahooCrawler.new(self.yahoo_search_page)
       bing = BingCrawler.new(self.bing_search_page)
@@ -219,7 +214,6 @@ class Trademark < ActiveRecord::Base
       yahoo.organic_results(total_organic_results)
       bing.organic_results(total_organic_results)
 
-      puts google.organic.inspect
       google.organic.each do |organic|
         self.search_results.create(:url => organic, :search_engine => "Google")
       end
@@ -229,12 +223,12 @@ class Trademark < ActiveRecord::Base
         self.search_results.create(:url => organic, :search_engine => "Yahoo")
       end
       self.total_yahoo_results = yahoo.total_organic_results
-      
+
       bing.organic.each do |organic|
         self.search_results.create(:url => organic, :search_engine => "Bing")
       end
       self.total_bing_results = bing.total_organic_results
-      
+
       self.save
     rescue Exception => e
       puts "Error trying to determing search links for " + self.term
@@ -249,46 +243,42 @@ class Trademark < ActiveRecord::Base
   def determine_sponsored_links
     begin
       self.search_ads.find(:all).map {|i| i.destroy}
-      
+
       google = GoogleCrawler.new(self.google_search_page)
       yahoo = YahooCrawler.new(self.yahoo_search_page)
       bing = BingCrawler.new(self.bing_search_page)
-      
+
       total_sponsored_results = TOTAL_SPONSORED_LINKS
 
       google.sponsored_results(total_sponsored_results)
       yahoo.sponsored_results(total_sponsored_results)
       bing.sponsored_results(total_sponsored_results)
-      
-      puts google.sponsored_cites
-
 
       google.sponsored_cites.each_index do |i|
         sponsored = google.sponsored_cites[i]
         self.search_ads.create(:url => sponsored, :search_engine => "Google", :location => google.ad_positions[i].to_s)
       end
-      
+
       yahoo.sponsored_cites.each_index do |i|
         sponsored = yahoo.sponsored_cites[i]
         self.search_ads.create(:url => sponsored, :search_engine => "Yahoo", :location => yahoo.ad_positions[i].to_s)
       end
-      
+
       bing.sponsored_cites.each_index do |i|
         sponsored = bing.sponsored_cites[i]
         self.search_ads.create(:url => sponsored, :search_engine => "Bing", :location => bing.ad_positions[i].to_s)
       end
-      
+
     rescue Exception => e
       puts "Error trying to determing search links for " + self.term
       puts e.inspect
     end
-    
+
     puts "Found " + self.search_ads.count.to_s + " sponsored search results for " + self.term
 
     return true
   end
-  
-  
+  #
   # exporting to CSV
   def self.csv_header
     row = ["Trademark"]

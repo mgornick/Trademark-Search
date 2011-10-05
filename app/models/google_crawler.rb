@@ -20,35 +20,28 @@ class GoogleCrawler
   def organic_results(number)
     self.organic = []
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
-    puts doc.inspect
-    
+
     # results = doc.css("div[@id='ires']/ol/li[@class='g']/h3[@class='r']/a[@class='l']")
     results = doc.css("div#ires ol li h3.r a.l")
-    puts doc
     results.each do |link|
-      puts "%%%%%%%%%"
-      puts "found #{link[:href]}"
       self.organic << link[:href]
     end
-    
+
     self.organic = self.organic[0..number-1]
   end
-  
+
   def adurl(link) #regex to try an extract the resulting adurl from the sponsored link
     link.scan(/[\w|\d|\-|.]*\.[\w]{3,4}[\/|\w|\d|\-]*[.|\w]*/).last
   end
-  
+
   def sponsored_results(number)
     self.sponsored_adurls = []
     self.sponsored_cites = []
     self.ad_positions = []
-    
+
     doc = Nokogiri::HTML(page) # let nokogiri parse the DOM
-    
-    # grabbing the cite tag
-    # top
-    
-    top_results = doc.css("div[@id='tads']/ol[@onmouseover='return true']/li[@class='tas']")
+
+    top_results = doc.css("div#tads ol li.tas")
     top_results.each do |link|
       cite_link = link.css('cite').text.gsub(' ', '').gsub("\n", '')
       if cite_link.scan('http').first
@@ -59,7 +52,7 @@ class GoogleCrawler
       self.ad_positions << 'Top'
     end
     self.sponsored_cites[0..number-1]
-    
+
     results = doc.css("div[@id='tads']/ol[@onmouseover='return true']/li/h3/a")
     results.each do |link|
       cite_link = self.adurl(link[:href])
@@ -69,10 +62,10 @@ class GoogleCrawler
         self.sponsored_adurls << "http://" + cite_link
       end
     end
-    
+
     self.sponsored_adurls[0..number-1]
-    
-    
+
+
     # Right
     results = doc.css("td[@class='std']/ol[@onmouseover='return true']/li")
     results.each do |link|
@@ -85,7 +78,7 @@ class GoogleCrawler
       self.ad_positions << 'Right'
     end
     self.sponsored_cites[0..number-1]
-    
+
     results = doc.css("td[@class='std']/ol[@onmouseover='return true']/li/h3/a")
     results.each do |link|
       cite_link = self.adurl(link[:href])
@@ -95,8 +88,8 @@ class GoogleCrawler
         self.sponsored_adurls << "http://" + cite_link
       end
     end
-    
+
     self.sponsored_adurls[0..number-1]
   end
-  
+
 end
