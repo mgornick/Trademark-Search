@@ -14,7 +14,7 @@ LIMIT_PDF_SPONSORED_LINKS = 5
 class Trademark < ActiveRecord::Base
   has_many :search_results
   has_many :search_ads
-  
+
   def self.import # deletes all prior results and loads in trademarks via text file
     Trademark.delete_all
     SearchResult.delete_all
@@ -23,79 +23,69 @@ class Trademark < ActiveRecord::Base
     trademarks = IO.read('trademarks.txt').split("\n")
     trademarks.each do |trademark|
       if Trademark.find(:first, :conditions => {:term => trademark}).nil?
-        
         puts "Adding the trademark #{trademark} to the database."
         Trademark.create(:term => trademark)
       end
     end
     true
   end
-  
-  def retrieve_google_search_page #testing of culerity
-    puts "\t searching google..."
+
+  def retrieve_google_search_page
+    puts "\t searching google"
     Capybara.visit("https://www.google.com")
     Capybara.fill_in "q", :with => self.term
-    #Capybara.click_button "Google Search"
     sleep(SLEEP_TIME)
-    if Capybara.page.has_content?("Instant is on")
-      # Capybara.click
-      puts "Instant search is on. This is likely to cause an error while parsing Google."
-    end
-    # Capybara.visit("http://www.google.com/search?q=" + self.term)
-    sleep(SLEEP_TIME)
-    self.google_search_page = Capybara.page.body.to_s
-    puts "\t saving html page..."
+    search_page = Capybara.save_page(Capybara.page.body)
+    file = File.open(search_page, "rb")
+    contents = file.read
+    File.delete(search_page)
+
+    self.google_search_page = contents
   end
-  
-  def retrieve_yahoo_search_page #testing of culerity
-    puts "\t searching yahoo..."   
+
+  def retrieve_yahoo_search_page
+    puts "\t searching yahoo"
     Capybara.visit("http://www.yahoo.com")
+    sleep(SLEEP_TIME)
+    Capybara.fill_in "p", :with => self.term
+    sleep(SLEEP_TIME)
+    search_page = Capybara.save_page(Capybara.page.body)
+    file = File.open(search_page, "rb")
+    contents = file.read
+    File.delete(search_page)
 
-    sleep(SLEEP_TIME)
-    Capybara.fill_in "p", :with => self.term 
-
-    sleep(SLEEP_TIME)
-    Capybara.click_button "Search"
-    # Capybara.visit("http://search.yahoo.com/search;_ylt=" + rand(1000000).to_s + "?p=" + self.term)
-    sleep(SLEEP_TIME)
-    self.yahoo_search_page = Capybara.page.body.to_s
-    puts "\t saving html page..."
+    self.yahoo_search_page = contents
   end
-  
-  def retrieve_bing_search_page #testing of culerity
-    puts "\t searching bing..."
+
+  def retrieve_bing_search_page
+    puts "\t searching bing"
     Capybara.visit("http://www.bing.com")
-
     sleep(SLEEP_TIME)
-    Capybara.fill_in "q", :with => self.term 
-
+    Capybara.fill_in "q", :with => self.term
     sleep(SLEEP_TIME)
     Capybara.click_button "sb_form_go"
-    # Capybara.visit("http://www.bing.com/search?q=" + self.term)
     sleep(SLEEP_TIME)
-    self.bing_search_page = Capybara.page.body.to_s
+    search_page = Capybara.save_page(Capybara.page.body)
+    file = File.open(search_page, "rb")
+    contents = file.read
+    File.delete(search_page)
+
+    self.bing_search_page = contents
   end
-  
+
   def self.scrape
     Capybara.run_server = false
-    # Capybara.current_driver = :culerity
-    Capybara.current_driver = :selenium 
-    
-    
+    Capybara.current_driver = :selenium
+
     Trademark.all.each do |t|
-      start_time = Time.now
       puts "Working on " + t.term
       t.perform_searches
-      end_time = Time.now
-      
-      single_trademark_time = end_time - start_time      
       incomplete = Trademark.count(:conditions => {:complete => nil})
-      puts "Estimated time remaining to complete search: " + (single_trademark_time * incomplete/3600).to_s + " hours" 
     end
-    
+
     return true
   end
-  
+
   def self.links
     Trademark.find(:all, :conditions => {:complete => true}).each do |t|
       puts "Determining Organic and Sponsored links for " + t.term
@@ -104,12 +94,12 @@ class Trademark < ActiveRecord::Base
     end
     true
   end
-  
+
   def self.pdfs
     Trademark.find(:all, :conditions => {:complete => true}).each do |t|
       trademark_name = t.to_slug
       filepath = "#{RAILS_ROOT}/TRADEMARKS/#{trademark_name}"
-      
+
       if FileTest.directory?(filepath)
         puts "Skipping #{trademark_name} since folders already exist."
       else
@@ -191,18 +181,21 @@ class Trademark < ActiveRecord::Base
   
   def perform_searches
     return true if self.complete
-    
+
     #delete old search and ad results if crash
     self.search_results.delete_all
     self.search_ads.delete_all
-    
+
+    Capybara.reset!
     self.retrieve_google_search_page
+    Capybara.reset!
     self.retrieve_yahoo_search_page
+    Capybara.reset!
     self.retrieve_bing_search_page
-    
+
     self.complete = true
     self.save
-    
+
     puts "completed " + self.term
   # rescue
   #   puts "Encountered Error on #{self.term}"
@@ -371,5 +364,4 @@ def to_slug
 
      ret
   end
-  
 end
