@@ -83,9 +83,13 @@ class Trademark < ActiveRecord::Base
     File.delete(home_page)
 
     Trademark.all.each do |t|
+      start_time = Time.now
       puts "Working on " + t.term
       t.perform_searches
+      end_time = Time.now
+      single_trademark_time = end_time - start_time
       incomplete = Trademark.count(:conditions => {:complete => nil})
+      puts "Estimated time remaining to complete search: " + (single_trademark_time * incomplete/3600).to_s + " hours"
     end
 
     return true
