@@ -175,7 +175,7 @@ class Trademark < ActiveRecord::Base
   
   
   def self.excel
-    csv_string = CSV.generate do |csv|
+    csv_string = FasterCSV.generate do |csv|
       #header row
       csv << Trademark.csv_header
       Trademark.find(:all, :conditions => {:complete => true}).each do |t|
