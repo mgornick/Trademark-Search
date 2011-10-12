@@ -14,7 +14,6 @@ _site/
 vendor/bundler_gems/*
 !vendor/bundler_gems/cache/
 vendor/bundler_gems/cache/*
-bin/
 .svn
 .bundle/environment.rb
 Gemfile.lock
