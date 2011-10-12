@@ -48,6 +48,10 @@ class Trademark < ActiveRecord::Base
     Capybara.visit("http://www.yahoo.com")
     sleep(SLEEP_TIME)
     Capybara.fill_in "p", :with => self.term
+    begin
+      Capybara.click_button("Web Search")
+    rescue
+    end
     sleep(SLEEP_TIME)
     search_page = Capybara.save_page(Capybara.page.body)
     file = File.open(search_page, "rb")
