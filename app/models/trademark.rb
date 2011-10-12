@@ -187,7 +187,7 @@ class Trademark < ActiveRecord::Base
       end
     end
 
-    File.open("trademark_excel_export.csv", "w") do |f|
+    File.open("trademark-excel-export-#{Time.now.strftime("%m-%d-%Y-%I_%M%p")}.csv", "w") do |f|
       f.puts csv_string
     end
   end
