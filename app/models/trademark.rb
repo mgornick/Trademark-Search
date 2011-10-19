@@ -3,7 +3,7 @@ require 'capybara/dsl'
 require 'fileutils'
 require 'csv'
 
-SLEEP_TIME = 3              # number of seconds to wait between each search
+SLEEP_TIME = 4              # number of seconds to wait between each search
 TOTAL_SPONSORED_LINKS = 15
 TOTAL_ORGANIC_LINKS = 10
 LIMIT_PDF_ORGANIC_LINKS = 5
