@@ -49,7 +49,7 @@ class Trademark < ActiveRecord::Base
     sleep(SLEEP_TIME)
     Capybara.fill_in "p", :with => self.term
     begin
-      Capybara.click_button("Web Search")
+      Capybara.click_button("Search")
     rescue
     end
     sleep(SLEEP_TIME)
