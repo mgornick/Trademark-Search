@@ -23,8 +23,10 @@ class Trademark < ActiveRecord::Base
     trademarks = IO.read('trademarks.txt').split("\n")
     trademarks.each do |trademark|
       if Trademark.find(:first, :conditions => {:term => trademark}).nil?
-        puts "Adding #{trademark}"
-        Trademark.create(:term => trademark)
+        unless trademark.blank?
+          puts "Adding #{trademark}"
+          Trademark.create(:term => trademark)
+        end
       end
     end
     true
@@ -208,10 +210,7 @@ class Trademark < ActiveRecord::Base
 
     self.complete = true
     self.save
-
-    puts "completed " + self.term
   end
-
 
   def determine_organic_links
     begin
